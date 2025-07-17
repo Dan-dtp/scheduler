@@ -17,7 +17,7 @@ import java.util.List;
 
 public class TaskPanel extends JPanel {
     private TaskManager taskManager;
-    private final Runnable refreshCallback; // Add this field
+    private final Runnable refreshCallback;
     private JTable taskTable;
     private TaskTableModel tableModel;
 
@@ -29,23 +29,31 @@ public class TaskPanel extends JPanel {
     }
 
     private void initComponents() {
+        // Apply theme to main panel
+        Theme.applyModernPanelStyle(this);
+
         // Create table model
         tableModel = new TaskTableModel(taskManager);
         taskTable = new JTable(tableModel);
+        Theme.applyTableStyle(taskTable);
 
         // Custom renderers
         taskTable.setDefaultRenderer(Priority.class, new PriorityRenderer());
         taskTable.setDefaultRenderer(Category.class, new CategoryRenderer());
-
-        // Row height and selection mode
-        taskTable.setRowHeight(30);
         taskTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Toolbar
+        // Toolbar - changed from JPanel to JToolBar
         JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        toolBar.setBackground(Theme.isDarkMode() ? Theme.BACKGROUND_DARK : Theme.BACKGROUND_LIGHT);
+
         JButton addButton = new JButton("Add Task");
         JButton editButton = new JButton("Edit");
         JButton deleteButton = new JButton("Delete");
+
+        Theme.applyButtonStyle(addButton);
+        Theme.applyButtonStyle(editButton);
+        Theme.applyButtonStyle(deleteButton);
 
         addButton.addActionListener(e -> showTaskDialog(null));
         editButton.addActionListener(e -> editSelectedTask());
@@ -55,11 +63,13 @@ public class TaskPanel extends JPanel {
         toolBar.add(editButton);
         toolBar.add(deleteButton);
 
-        // Filter panel
+        // Filter panel - remains as JPanel
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        Theme.applyModernPanelStyle(filterPanel);
+
         JTextField searchField = new JTextField(20);
         JComboBox<Priority> priorityFilter = new JComboBox<>(Priority.values());
-        priorityFilter.insertItemAt(null, 0); // Add "All" option
+        priorityFilter.insertItemAt(null, 0);
         priorityFilter.setSelectedIndex(0);
 
         searchField.getDocument().addDocumentListener(new DocumentAdapter() {
@@ -79,8 +89,8 @@ public class TaskPanel extends JPanel {
 
         // Add components
         add(filterPanel, BorderLayout.NORTH);
-        add(toolBar, BorderLayout.SOUTH);
         add(new JScrollPane(taskTable), BorderLayout.CENTER);
+        add(toolBar, BorderLayout.SOUTH);  // Changed from panel to toolBar
     }
 
     private void filterTasks(String searchText, Priority priorityFilter) {
@@ -105,9 +115,31 @@ public class TaskPanel extends JPanel {
                 (JFrame)SwingUtilities.getWindowAncestor(this),
                 taskManager,
                 task,
-                refreshCallback // Use the field here
+                () -> {
+                    // Force immediate and complete refresh
+                    refreshImmediately();
+                }
         );
         dialog.setVisible(true);
+    }
+
+    private void refreshImmediately() {
+        // 1. Refresh the underlying data
+        tableModel.refreshData();
+
+        // 2. Force UI update
+        SwingUtilities.invokeLater(() -> {
+            tableModel.fireTableDataChanged();
+            revalidate();
+            repaint();
+
+        });
+
+        getParent().revalidate(); // Refresh parent container
+        Window window = SwingUtilities.getWindowAncestor(this);
+        if (window != null) {
+            window.repaint();
+        }
     }
 
     private void editSelectedTask() {
@@ -127,7 +159,6 @@ public class TaskPanel extends JPanel {
         }
     }
 
-    // Custom table model with filtering support
     private class TaskTableModel extends AbstractTableModel {
         private final TaskManager taskManager;
         private List<Task> filteredTasks;
@@ -154,6 +185,17 @@ public class TaskPanel extends JPanel {
                     ex.printStackTrace();
                 }
             }
+        }
+
+        public void refreshData() {
+            filteredTasks = new ArrayList<>(taskManager.getTasks());
+            Collections.sort(filteredTasks);
+        }
+
+        public void fireTableDataChanged() {
+            // Ensure we're working with fresh data
+            filteredTasks = new ArrayList<>(taskManager.getTasks());
+            super.fireTableDataChanged();
         }
 
         public void filter(java.util.function.Predicate<Task> predicate) {
@@ -210,11 +252,14 @@ public class TaskPanel extends JPanel {
     }
 
     public void refresh() {
-        tableModel.filter(task -> true); // Reset any filters
-        tableModel.fireTableDataChanged();
+        SwingUtilities.invokeLater(() -> {
+            tableModel.filter(task -> true); // Reset any filters
+            tableModel.fireTableDataChanged();
+            revalidate();
+            repaint();
+        });
     }
 
-    // DocumentAdapter for text field changes
     private abstract class DocumentAdapter implements javax.swing.event.DocumentListener {
         @Override public void insertUpdate(javax.swing.event.DocumentEvent e) { changed(); }
         @Override public void removeUpdate(javax.swing.event.DocumentEvent e) { changed(); }

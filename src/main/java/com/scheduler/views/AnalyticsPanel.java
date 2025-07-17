@@ -27,21 +27,20 @@ public class AnalyticsPanel extends JPanel {
     }
 
     private void initComponents() {
+        Theme.applyModernPanelStyle(this);
+
         // Priority Distribution Chart
         priorityChartPanel = new ChartPanel(createPriorityChart());
         priorityChartPanel.setBorder(BorderFactory.createTitledBorder("Priority Distribution"));
+        priorityChartPanel.setBackground(Theme.isDarkMode() ? Theme.BACKGROUND_DARK : Theme.BACKGROUND_LIGHT);
 
         // Completion Rate Chart
         completionChartPanel = new ChartPanel(createCompletionChart());
         completionChartPanel.setBorder(BorderFactory.createTitledBorder("Completion Rate"));
-
-        // Heatmap Panel (placeholder implementation)
-        heatmapPanel = createHeatmapPanel();
-        heatmapPanel.setBorder(BorderFactory.createTitledBorder("Weekly Productivity"));
+        completionChartPanel.setBackground(Theme.isDarkMode() ? Theme.BACKGROUND_DARK : Theme.BACKGROUND_LIGHT);
 
         add(priorityChartPanel);
         add(completionChartPanel);
-        // add(heatmapPanel); // Uncomment when implemented
     }
 
     public void refresh() {
@@ -68,19 +67,14 @@ public class AnalyticsPanel extends JPanel {
                 );
 
         JFreeChart chart = ChartFactory.createPieChart(
-                null, // no title
-                dataset,
-                true, // include legend
-                true, // tooltips
-                false // no URLs
-        );
+                null, dataset, true, true, false);
 
         // Styling
-        chart.setBackgroundPaint(new Color(245, 245, 245));
+        chart.setBackgroundPaint(Theme.isDarkMode() ? Theme.BACKGROUND_DARK : Theme.BACKGROUND_LIGHT);
         PiePlot plot = (PiePlot) chart.getPlot();
         plot.setBackgroundPaint(null);
         plot.setOutlineVisible(false);
-        plot.setLabelGenerator(null); // Hide labels on slices
+        plot.setLabelGenerator(null);
 
         return chart;
     }
@@ -97,22 +91,15 @@ public class AnalyticsPanel extends JPanel {
         dataset.addValue(pending, "Tasks", "Pending");
 
         JFreeChart chart = ChartFactory.createBarChart(
-                null, // no title
-                "Status",
-                "Count",
-                dataset,
-                PlotOrientation.VERTICAL,
-                false, // no legend
-                true, // tooltips
-                false // no URLs
-        );
+                null, "Status", "Count", dataset,
+                PlotOrientation.VERTICAL, false, true, false);
 
         // Styling
-        chart.setBackgroundPaint(new Color(245, 245, 245));
+        chart.setBackgroundPaint(Theme.isDarkMode() ? Theme.BACKGROUND_DARK : Theme.BACKGROUND_LIGHT);
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setBackgroundPaint(null);
         plot.setOutlineVisible(false);
-        plot.getRenderer().setSeriesPaint(0, new Color(70, 130, 180));
+        plot.getRenderer().setSeriesPaint(0, Theme.isDarkMode() ? Theme.PRIMARY_DARK : Theme.PRIMARY_LIGHT);
 
         return chart;
     }

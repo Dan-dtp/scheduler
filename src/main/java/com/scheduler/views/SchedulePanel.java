@@ -22,23 +22,28 @@ public class SchedulePanel extends JPanel {
     }
 
     private void initComponents() {
+        Theme.applyModernPanelStyle(this);
+
         // Control panel
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
-        controlPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        Theme.applyModernPanelStyle(controlPanel);
 
-        controlPanel.add(new JLabel("Weeks to show:"));
+        JLabel weeksLabel = new JLabel("Weeks to show:");
+        weeksLabel.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+
         weeksSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 12, 1));
-        controlPanel.add(weeksSpinner);
 
         JButton refreshBtn = new JButton("Refresh");
+        Theme.applyButtonStyle(refreshBtn);
         refreshBtn.addActionListener(e -> refreshSchedule());
+
+        controlPanel.add(weeksLabel);
+        controlPanel.add(weeksSpinner);
         controlPanel.add(refreshBtn);
 
         // Table setup
         scheduleTable = new JTable(new ScheduleTableModel());
-        scheduleTable.setRowHeight(40);
-        scheduleTable.setShowGrid(false);
-        scheduleTable.setIntercellSpacing(new Dimension(0, 5));
+        Theme.applyTableStyle(scheduleTable);
         scheduleTable.setDefaultRenderer(Object.class, new ScheduleTableCellRenderer());
 
         // Add components
@@ -96,8 +101,8 @@ public class SchedulePanel extends JPanel {
     private class ScheduleTableCellRenderer extends DefaultTableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
-
+                                                       boolean isSelected, boolean hasFocus,
+                                                       int row, int column) {
             Component c = super.getTableCellRendererComponent(table, value,
                     isSelected, hasFocus, row, column);
 
@@ -106,16 +111,18 @@ public class SchedulePanel extends JPanel {
             if (column == 2) { // Tasks column
                 JPanel panel = new JPanel(new BorderLayout());
                 panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                panel.setBackground(isSelected ? table.getSelectionBackground() : Color.WHITE);
+                panel.setBackground(isSelected ? table.getSelectionBackground() :
+                        (Theme.isDarkMode() ? Theme.CARD_BACKGROUND_DARK : Theme.CARD_BACKGROUND_LIGHT));
 
                 JTextArea textArea = new JTextArea();
                 textArea.setEditable(false);
                 textArea.setBackground(panel.getBackground());
+                textArea.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
                 textArea.setFont(table.getFont());
 
                 if (day.tasks.isEmpty()) {
                     textArea.setText("No tasks scheduled");
-                    textArea.setForeground(Color.GRAY);
+                    textArea.setForeground(Theme.isDarkMode() ? Theme.TEXT_SECONDARY_DARK : Theme.TEXT_SECONDARY_LIGHT);
                 } else {
                     for (Task task : day.tasks) {
                         textArea.append("• " + task.getTitle() +
@@ -127,6 +134,8 @@ public class SchedulePanel extends JPanel {
                 return panel;
             }
 
+            c.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+            c.setBackground(Theme.isDarkMode() ? Theme.BACKGROUND_DARK : Theme.BACKGROUND_LIGHT);
             return c;
         }
     }

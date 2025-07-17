@@ -1,5 +1,8 @@
 package com.scheduler.views;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -35,7 +38,16 @@ public class Theme {
 
     public static void toggleDarkMode() {
         darkMode = !darkMode;
-        updateUIManager();
+        try {
+            if (darkMode) {
+                UIManager.setLookAndFeel(new FlatDarkLaf());
+            } else {
+                UIManager.setLookAndFeel(new FlatLightLaf());
+            }
+            updateUIManager();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public static void updateUIManager() {
@@ -100,5 +112,15 @@ public class Theme {
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));
         table.setFillsViewportHeight(true);
+    }
+
+    public static void refreshAllComponents(Component component) {
+        if (component instanceof Container) {
+            for (Component child : ((Container)component).getComponents()) {
+                refreshAllComponents(child);
+            }
+        }
+        component.revalidate();
+        component.repaint();
     }
 }

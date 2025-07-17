@@ -18,6 +18,7 @@ public class MainFrame extends JFrame {
         initModels();
         initUI();
         initListeners();
+        setJMenuBar(createMenuBar());
     }
 
     private void initModels() {
@@ -29,7 +30,7 @@ public class MainFrame extends JFrame {
             if (taskManager.getCategories().isEmpty()) {
                 taskManager.getCategories().add(new Category("Work", Color.RED));
                 taskManager.getCategories().add(new Category("Personal", Color.BLUE));
-                taskManager.getCategories().add(new Category("Health", Color.GREEN));
+                taskManager.getCategories().add(new Category("Family", Color.GREEN));
                 taskManager.getCategories().add(new Category("Education", Color.ORANGE));
                 taskManager.getCategories().add(new Category("Other", Color.GRAY));
 
@@ -97,6 +98,7 @@ public class MainFrame extends JFrame {
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
+        // File menu
         JMenu fileMenu = new JMenu("File");
         JMenuItem saveItem = new JMenuItem("Save");
         saveItem.addActionListener(e -> {
@@ -107,7 +109,23 @@ public class MainFrame extends JFrame {
             }
         });
         fileMenu.add(saveItem);
+
+        // Theme menu
+        JMenu themeMenu = new JMenu("Theme");
+        JMenuItem toggleThemeItem = new JMenuItem("Toggle Dark Mode");
+        toggleThemeItem.addActionListener(e -> {
+            Theme.toggleDarkMode();
+
+            // Force complete UI refresh
+            SwingUtilities.invokeLater(() -> {
+                SwingUtilities.updateComponentTreeUI(this);
+                refreshAllViews();
+            });
+        });
+        themeMenu.add(toggleThemeItem);
+
         menuBar.add(fileMenu);
+        menuBar.add(themeMenu);
 
         return menuBar;
     }

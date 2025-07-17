@@ -23,14 +23,11 @@ public class StorageManager {
             .create();
 
     public static void saveData(TaskManager taskManager) throws IOException {
-        // Save tasks
-        try (Writer writer = new FileWriter(TASKS_FILE)) {
-            gson.toJson(taskManager.getTasks(), writer);
-        }
+        List<Task> tasks = taskManager.getTasks();
+        System.out.println("[DEBUG] Saving " + tasks.size() + " tasks to file");
 
-        // Save categories
-        try (Writer writer = new FileWriter(CATEGORIES_FILE)) {
-            gson.toJson(new ArrayList<>(taskManager.getCategories()), writer); // Create new ArrayList
+        try (Writer writer = new FileWriter(TASKS_FILE)) {
+            gson.toJson(tasks, writer);
         }
     }
 
@@ -41,14 +38,17 @@ public class StorageManager {
             try (Reader reader = new FileReader(tasksFile)) {
                 Type taskListType = new TypeToken<List<Task>>(){}.getType();
                 List<Task> tasks = gson.fromJson(reader, taskListType);
+                System.out.println("Loaded tasks: " + tasks.size());
                 if (tasks != null) {
-                    taskManager.getTasks().clear(); // Clear existing tasks
-                    tasks.forEach(taskManager::addTask);
+                    System.out.println("[DEBUG] Loading " + tasks.size() + " tasks from file");
+                    tasks.forEach(task -> {
+                        System.out.println(" - " + task.getTitle());
+                        taskManager.addTask(task);
+                    });
                 }
             }
         }
 
-        // Load categories - FIXED: Create new modifiable list
         File categoriesFile = new File(CATEGORIES_FILE);
         if (categoriesFile.exists()) {
             try (Reader reader = new FileReader(categoriesFile)) {

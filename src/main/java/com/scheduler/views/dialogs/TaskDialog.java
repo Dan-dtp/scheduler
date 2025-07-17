@@ -2,6 +2,7 @@ package com.scheduler.views.dialogs;
 
 import com.scheduler.models.*;
 import com.scheduler.utils.StorageManager;
+import com.scheduler.views.Theme;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -22,6 +23,8 @@ public class TaskDialog extends JDialog {
     private JSpinner dueDateSpinner;
     private JSpinner timeSpinner;
     private JCheckBox completedCheckbox;
+    private JButton okButton;
+    private JButton cancelButton;
 
     public TaskDialog(JFrame parent, TaskManager taskManager, Task task, Runnable refreshCallback) {
         super(parent, task == null ? "Add Task" : "Edit Task", true);
@@ -32,16 +35,17 @@ public class TaskDialog extends JDialog {
         setSize(500, 450);
         setLocationRelativeTo(parent);
         initComponents();
-        pack();
     }
 
     private void initComponents() {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        Theme.applyModernPanelStyle(mainPanel);
 
         // Form panel with improved layout
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        Theme.applyModernPanelStyle(formPanel);
 
         // Title
         addFormRow(formPanel, "Title:", titleField = new JTextField());
@@ -58,6 +62,7 @@ public class TaskDialog extends JDialog {
         categoryCombo = new JComboBox<>();
         refreshCategories();
         JButton addCategoryBtn = new JButton("+");
+        Theme.applyButtonStyle(addCategoryBtn);
         addCategoryBtn.addActionListener(e -> showAddCategoryDialog());
         JPanel categoryPanel = new JPanel(new BorderLayout());
         categoryPanel.add(categoryCombo, BorderLayout.CENTER);
@@ -86,14 +91,22 @@ public class TaskDialog extends JDialog {
 
         // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
-        JButton saveButton = new JButton("Save");
-        JButton cancelButton = new JButton("Cancel");
+        Theme.applyModernPanelStyle(buttonPanel);
 
-        saveButton.addActionListener(e -> saveTask());
+        okButton = new JButton("Save");
+        cancelButton = new JButton("Cancel");
+
+        okButton.addActionListener(e -> {
+            saveTask();
+        });
+
         cancelButton.addActionListener(e -> dispose());
 
+        Theme.applyButtonStyle(okButton);
+        Theme.applyButtonStyle(cancelButton);
+
         buttonPanel.add(cancelButton);
-        buttonPanel.add(saveButton);
+        buttonPanel.add(okButton);
 
         // Load task data if editing
         if (task != null) {
@@ -115,14 +128,18 @@ public class TaskDialog extends JDialog {
 
     private JPanel createLabeledPanel(String label, Component component) {
         JPanel panel = new JPanel(new BorderLayout(5, 0));
-        panel.add(new JLabel(label), BorderLayout.WEST);
+        JLabel jLabel = new JLabel(label);
+        jLabel.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+        panel.add(jLabel, BorderLayout.WEST);
         panel.add(component, BorderLayout.CENTER);
         return panel;
     }
 
     private void addFormRow(JPanel panel, String label, Component component) {
         JPanel row = new JPanel(new BorderLayout(10, 0));
-        row.add(new JLabel(label), BorderLayout.WEST);
+        JLabel jLabel = new JLabel(label);
+        jLabel.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+        row.add(jLabel, BorderLayout.WEST);
         row.add(component, BorderLayout.CENTER);
         panel.add(row);
         panel.add(Box.createVerticalStrut(10));
@@ -160,46 +177,42 @@ public class TaskDialog extends JDialog {
                 throw new IllegalArgumentException("Title cannot be empty");
             }
 
-            // Create new task or use existing one
-            Task taskToSave = (task == null) ? new Task() : task;
-
-            // Set all fields
-            taskToSave.setTitle(titleField.getText().trim());
-            taskToSave.setDescription(descriptionArea.getText().trim());
-            taskToSave.setPriority((Priority) priorityCombo.getSelectedItem());
-            Category selectedCategory = (Category) categoryCombo.getSelectedItem();
-            if (selectedCategory == null) {
-                throw new IllegalArgumentException("Please select a category");
+            if (task == null) {
+                task = new Task();
             }
-            taskToSave.setCategory(selectedCategory);
+
+            task.setTitle(titleField.getText().trim());
+            task.setDescription(descriptionArea.getText().trim());
+            task.setPriority((Priority) priorityCombo.getSelectedItem());
+            task.setCategory((Category) categoryCombo.getSelectedItem());
+            task.setCompleted(completedCheckbox.isSelected());
+
+
             // Combine date and time
             Date date = (Date) dueDateSpinner.getValue();
             Date time = (Date) timeSpinner.getValue();
-            if (date != null && time != null) {
-                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
-                taskToSave.setDueDate(LocalDateTime.of(localDate, localTime));
-            }
+            LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
+            task.setDueDate(LocalDateTime.of(localDate, localTime));
 
-            taskToSave.setCompleted(completedCheckbox.isSelected());
+            task.setCompleted(completedCheckbox.isSelected());
 
-            // Only add to manager if it's a new task
-            if (task == null) {
-                taskManager.addTask(taskToSave);
-            }
+
+            taskManager.addTask(task);
+
 
             StorageManager.saveData(taskManager);
+
             saved = true;
             refreshCallback.run();
-            dispose();
+            dispose();  // Close the dialog
         } catch (Exception ex) {
+            ex.printStackTrace();  // Add this for debugging
             JOptionPane.showMessageDialog(this,
                     "Error saving task: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
 
     public boolean isSaved() {
         return saved;

@@ -1,34 +1,16 @@
 [
   {
-    "id": "1df8fbf0-3318-4077-842e-44f5bdb17e9a",
-    "title": "asvasvvadsv",
-    "description": "sdsdgv",
+    "id": "b842eba6-4a0a-4f7f-99d6-c6f0f6e44525",
+    "title": "dfhhd",
+    "description": "ffhhd",
     "priority": "HIGH",
-    "dueDate": "2025-07-17T20:53",
+    "dueDate": "2025-07-17T19:45:50.043",
     "category": {
       "name": "Work",
       "color": {
         "r": 255,
         "g": 0,
         "b": 0
-      }
-    },
-    "completed": true,
-    "tags": [],
-    "subtasks": []
-  },
-  {
-    "id": "be44d1f9-a599-4c32-9872-8637a92c64b5",
-    "title": "sdsvsdvsd",
-    "description": "svsvbsbb",
-    "priority": "MEDIUM",
-    "dueDate": "2025-07-20T18:54:11.615",
-    "category": {
-      "name": "Personal",
-      "color": {
-        "r": 0,
-        "g": 0,
-        "b": 255
       }
     },
     "completed": false,
@@ -36,17 +18,17 @@
     "subtasks": []
   },
   {
-    "id": "bd13a8c4-7436-4a1c-9c14-f3688cf90725",
-    "title": "sgsdvdsvsv",
-    "description": "",
-    "priority": "HIGH",
-    "dueDate": "2025-09-07T11:32",
+    "id": "38f0c86f-e7d7-435b-b758-c78863964a94",
+    "title": "dsvasd",
+    "description": "svdsvsd",
+    "priority": "MEDIUM",
+    "dueDate": "2025-09-17T22:46",
     "category": {
-      "name": "Work",
+      "name": "Personal",
       "color": {
-        "r": 255,
+        "r": 0,
         "g": 0,
-        "b": 0
+        "b": 255
       }
     },
     "completed": false,
