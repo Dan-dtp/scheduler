@@ -20,120 +20,80 @@ public class TaskDialog extends JDialog {
     private JComboBox<Priority> priorityCombo;
     private JComboBox<Category> categoryCombo;
     private JSpinner dueDateSpinner;
+    private JSpinner timeSpinner;
     private JCheckBox completedCheckbox;
 
-    // Modified constructor to accept refresh callback
     public TaskDialog(JFrame parent, TaskManager taskManager, Task task, Runnable refreshCallback) {
         super(parent, task == null ? "Add Task" : "Edit Task", true);
         this.taskManager = taskManager;
         this.task = task;
         this.refreshCallback = refreshCallback;
 
-        setSize(500, 400);
+        setSize(500, 450);
         setLocationRelativeTo(parent);
-        setResizable(false);
-
         initComponents();
         pack();
     }
 
-
     private void initComponents() {
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // Form panel
-        JPanel formPanel = new JPanel(new GridLayout(0, 2, 5, 5));
+        // Form panel with improved layout
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
 
         // Title
-        formPanel.add(new JLabel("Title:"));
-        titleField = new JTextField();
-        formPanel.add(titleField);
+        addFormRow(formPanel, "Title:", titleField = new JTextField());
 
         // Description
-        formPanel.add(new JLabel("Description:"));
-        descriptionArea = new JTextArea(3, 20);
-        formPanel.add(new JScrollPane(descriptionArea));
+        descriptionArea = new JTextArea(4, 20);
+        addFormRow(formPanel, "Description:", new JScrollPane(descriptionArea));
 
-        // Priority
-        formPanel.add(new JLabel("Priority:"));
+        // Priority and Category
+        JPanel rowPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         priorityCombo = new JComboBox<>(Priority.values());
-        formPanel.add(priorityCombo);
+        rowPanel.add(createLabeledPanel("Priority:", priorityCombo));
 
-        // Category
-        formPanel.add(new JLabel("Category:"));
-        categoryCombo = new JComboBox<Category>() {
-            @Override
-            public void setSelectedItem(Object anObject) {
-                if (anObject instanceof String) {
-                    // Handle string selection by finding matching category
-                    for (int i = 0; i < getItemCount(); i++) {
-                        Category cat = getItemAt(i);
-                        if (cat.getName().equals(anObject)) {
-                            super.setSelectedItem(cat);
-                            return;
-                        }
-                    }
-                    super.setSelectedItem(null);
-                } else {
-                    super.setSelectedItem(anObject);
-                }
-            }
-        };
-
-        // Custom renderer for category display
-        categoryCombo.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value,
-                                                          int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Category) {
-                    Category cat = (Category) value;
-                    setText(cat.getName());
-                    setBackground(cat.getColor());
-                    setForeground(getContrastColor(cat.getColor()));
-                }
-                return this;
-            }
-
-            private Color getContrastColor(Color color) {
-                // Calculate contrasting text color
-                double luminance = (0.299 * color.getRed() + 0.587 * color.getGreen() + 0.114 * color.getBlue()) / 255;
-                return luminance > 0.5 ? Color.BLACK : Color.WHITE;
-            }
-        });
-
+        categoryCombo = new JComboBox<>();
         refreshCategories();
-
         JButton addCategoryBtn = new JButton("+");
         addCategoryBtn.addActionListener(e -> showAddCategoryDialog());
-
         JPanel categoryPanel = new JPanel(new BorderLayout());
         categoryPanel.add(categoryCombo, BorderLayout.CENTER);
         categoryPanel.add(addCategoryBtn, BorderLayout.EAST);
-        formPanel.add(categoryPanel);
+        rowPanel.add(createLabeledPanel("Category:", categoryPanel));
 
-        // Due Date
-        formPanel.add(new JLabel("Due Date:"));
+        formPanel.add(rowPanel);
+        formPanel.add(Box.createVerticalStrut(10));
+
+        // Date and Time
+        rowPanel = new JPanel(new GridLayout(1, 2, 10, 0));
         dueDateSpinner = new JSpinner(new SpinnerDateModel());
         dueDateSpinner.setEditor(new JSpinner.DateEditor(dueDateSpinner, "MM/dd/yyyy"));
-        formPanel.add(dueDateSpinner);
+        rowPanel.add(createLabeledPanel("Date:", dueDateSpinner));
 
-        // Completed
-        formPanel.add(new JLabel("Completed:"));
-        completedCheckbox = new JCheckBox();
+        timeSpinner = new JSpinner(new SpinnerDateModel());
+        timeSpinner.setEditor(new JSpinner.DateEditor(timeSpinner, "HH:mm"));
+        rowPanel.add(createLabeledPanel("Time:", timeSpinner));
+
+        formPanel.add(rowPanel);
+        formPanel.add(Box.createVerticalStrut(15));
+
+        // Completed Checkbox
+        completedCheckbox = new JCheckBox("Mark as completed");
         formPanel.add(completedCheckbox);
 
         // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         JButton saveButton = new JButton("Save");
         JButton cancelButton = new JButton("Cancel");
 
         saveButton.addActionListener(e -> saveTask());
         cancelButton.addActionListener(e -> dispose());
 
-        buttonPanel.add(saveButton);
         buttonPanel.add(cancelButton);
+        buttonPanel.add(saveButton);
 
         // Load task data if editing
         if (task != null) {
@@ -143,6 +103,7 @@ public class TaskDialog extends JDialog {
             categoryCombo.setSelectedItem(task.getCategory());
             if (task.getDueDate() != null) {
                 dueDateSpinner.setValue(Date.from(task.getDueDate().atZone(ZoneId.systemDefault()).toInstant()));
+                timeSpinner.setValue(Date.from(task.getDueDate().atZone(ZoneId.systemDefault()).toInstant()));
             }
             completedCheckbox.setSelected(task.isCompleted());
         }
@@ -152,18 +113,31 @@ public class TaskDialog extends JDialog {
         add(mainPanel);
     }
 
+    private JPanel createLabeledPanel(String label, Component component) {
+        JPanel panel = new JPanel(new BorderLayout(5, 0));
+        panel.add(new JLabel(label), BorderLayout.WEST);
+        panel.add(component, BorderLayout.CENTER);
+        return panel;
+    }
+
+    private void addFormRow(JPanel panel, String label, Component component) {
+        JPanel row = new JPanel(new BorderLayout(10, 0));
+        row.add(new JLabel(label), BorderLayout.WEST);
+        row.add(component, BorderLayout.CENTER);
+        panel.add(row);
+        panel.add(Box.createVerticalStrut(10));
+    }
+
     private void refreshCategories() {
         DefaultComboBoxModel<Category> model = new DefaultComboBoxModel<>();
-        for (Category category : taskManager.getCategories()) {
-            model.addElement(category);
-        }
+        taskManager.getCategories().forEach(model::addElement);
         categoryCombo.setModel(model);
     }
 
     private void showAddCategoryDialog() {
-        String name = JOptionPane.showInputDialog(this, "Enter category name:");
+        String name = JOptionPane.showInputDialog(this, "New Category Name:");
         if (name != null && !name.trim().isEmpty()) {
-            Color color = JColorChooser.showDialog(this, "Choose Category Color", Color.BLUE);
+            Color color = JColorChooser.showDialog(this, "Choose Color", Color.BLUE);
             if (color != null) {
                 Category newCategory = new Category(name.trim(), color);
                 taskManager.getCategories().add(newCategory);
@@ -182,61 +156,52 @@ public class TaskDialog extends JDialog {
 
     private void saveTask() {
         try {
-            // Validate inputs
             if (titleField.getText().trim().isEmpty()) {
                 throw new IllegalArgumentException("Title cannot be empty");
             }
 
-            Object selectedCategory = categoryCombo.getSelectedItem();
-            if (!(selectedCategory instanceof Category)) {
-                throw new IllegalArgumentException("Please select a valid category");
+            // Create new task or use existing one
+            Task taskToSave = (task == null) ? new Task() : task;
+
+            // Set all fields
+            taskToSave.setTitle(titleField.getText().trim());
+            taskToSave.setDescription(descriptionArea.getText().trim());
+            taskToSave.setPriority((Priority) priorityCombo.getSelectedItem());
+            Category selectedCategory = (Category) categoryCombo.getSelectedItem();
+            if (selectedCategory == null) {
+                throw new IllegalArgumentException("Please select a category");
             }
-
-            // Create or update task
-            if (task == null) {
-                task = new Task();
-                taskManager.addTask(task);  // Add to manager before setting properties
-            }
-
-            // Set task properties
-            task.setTitle(titleField.getText().trim());
-            task.setDescription(descriptionArea.getText().trim());
-            task.setPriority((Priority) priorityCombo.getSelectedItem());
-            task.setCategory((Category) selectedCategory);
-
-            // Handle date
+            taskToSave.setCategory(selectedCategory);
+            // Combine date and time
             Date date = (Date) dueDateSpinner.getValue();
-            Instant instant = date.toInstant();
-            LocalDateTime dueDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-            task.setDueDate(dueDateTime);
-
-            task.setCompleted(completedCheckbox.isSelected());
-
-            // Save data
-            StorageManager.saveData(taskManager);
-
-            saved = true;
-
-            // Refresh the main view
-            if (refreshCallback != null) {
-                refreshCallback.run();
+            Date time = (Date) timeSpinner.getValue();
+            if (date != null && time != null) {
+                LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
+                taskToSave.setDueDate(LocalDateTime.of(localDate, localTime));
             }
 
-            dispose();
+            taskToSave.setCompleted(completedCheckbox.isSelected());
 
+            // Only add to manager if it's a new task
+            if (task == null) {
+                taskManager.addTask(taskToSave);
+            }
+
+            StorageManager.saveData(taskManager);
+            saved = true;
+            refreshCallback.run();
+            dispose();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                     "Error saving task: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
         }
     }
 
+
+
     public boolean isSaved() {
         return saved;
-    }
-
-    public Task getTask() {
-        return task;
     }
 }

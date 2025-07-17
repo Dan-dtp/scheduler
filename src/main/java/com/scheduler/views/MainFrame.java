@@ -8,7 +8,11 @@ import java.io.IOException;
 
 public class MainFrame extends JFrame {
     private TaskManager taskManager;
-    private NotificationManager notificationManager;
+    private JTabbedPane tabbedPane;
+    private TaskPanel taskPanel;
+    private CalendarPanel calendarPanel;
+    private SchedulePanel schedulePanel;
+    private AnalyticsPanel analyticsPanel; // Changed from StatsPanel
 
     public MainFrame() {
         initModels();
@@ -20,49 +24,90 @@ public class MainFrame extends JFrame {
         taskManager = new TaskManager();
         try {
             StorageManager.loadData(taskManager);
+
+            // Add default categories if none exist
+            if (taskManager.getCategories().isEmpty()) {
+                taskManager.getCategories().add(new Category("Work", Color.RED));
+                taskManager.getCategories().add(new Category("Personal", Color.BLUE));
+                taskManager.getCategories().add(new Category("Health", Color.GREEN));
+                taskManager.getCategories().add(new Category("Education", Color.ORANGE));
+                taskManager.getCategories().add(new Category("Other", Color.GRAY));
+
+                // Save the default categories
+                StorageManager.saveData(taskManager);
+            }
         } catch (IOException e) {
             showError("Error loading data", e);
         }
-        notificationManager = new NotificationManager(taskManager);
     }
 
     private void initUI() {
         setTitle("Smart Scheduler Pro");
-        setSize(1200, 800);
+        setSize(1280, 800);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Tasks", new TaskPanel(taskManager));
-        tabbedPane.addTab("Calendar", new CalendarPanel(taskManager));
-        tabbedPane.addTab("Schedule", new SchedulePanel(taskManager));
-        tabbedPane.addTab("Statistics", new StatsPanel(taskManager));
+        // Add dark mode toggle to menu
+        JMenuBar menuBar = createMenuBar();
+        JMenu themeMenu = new JMenu("Theme");
+        JMenuItem toggleThemeItem = new JMenuItem("Toggle Dark Mode");
+        toggleThemeItem.addActionListener(e -> {
+            Theme.toggleDarkMode();
+            refreshAllViews();
+        });
+        themeMenu.add(toggleThemeItem);
+        menuBar.add(themeMenu);
+        setJMenuBar(menuBar);
 
-        setJMenuBar(createMenuBar());
-        add(tabbedPane);
+
+        // Initialize panels
+        taskPanel = new TaskPanel(taskManager, this::refreshAllViews);
+        calendarPanel = new CalendarPanel(taskManager);
+        schedulePanel = new SchedulePanel(taskManager);
+        analyticsPanel = new AnalyticsPanel(taskManager);
+
+        // Create tabbed pane with modern styling
+        tabbedPane = new JTabbedPane();
+        tabbedPane.putClientProperty("JTabbedPane.tabType", "card");
+        tabbedPane.putClientProperty("JTabbedPane.tabInsets", new Insets(10, 15, 10, 15));
+
+        // Add tabs (using placeholder icons)
+        tabbedPane.addTab("Tasks", new ImageIcon(), taskPanel);
+        tabbedPane.addTab("Calendar", new ImageIcon(), calendarPanel);
+        tabbedPane.addTab("Schedule", new ImageIcon(), schedulePanel);
+        tabbedPane.addTab("Analytics", new ImageIcon(), analyticsPanel);
+
+        // Main panel with padding
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainPanel.add(tabbedPane, BorderLayout.CENTER);
+
+        add(mainPanel);
+    }
+
+    public void refreshAllViews() {
+        SwingUtilities.invokeLater(() -> {
+            taskPanel.refresh();
+            calendarPanel.refresh();
+            schedulePanel.refresh();
+            analyticsPanel.refresh();
+        });
     }
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // File Menu
         JMenu fileMenu = new JMenu("File");
-        JMenuItem exportItem = new JMenuItem("Export to CSV");
-        JMenuItem importItem = new JMenuItem("Import from CSV");
-        JMenuItem exitItem = new JMenuItem("Exit");
-
-        fileMenu.add(importItem);
-        fileMenu.add(exportItem);
-        fileMenu.addSeparator();
-        fileMenu.add(exitItem);
-
-        // View Menu
-        JMenu viewMenu = new JMenu("View");
-        JCheckBoxMenuItem darkModeItem = new JCheckBoxMenuItem("Dark Mode");
-        viewMenu.add(darkModeItem);
-
+        JMenuItem saveItem = new JMenuItem("Save");
+        saveItem.addActionListener(e -> {
+            try {
+                StorageManager.saveData(taskManager);
+            } catch (IOException ex) {
+                showError("Error saving data", ex);
+            }
+        });
+        fileMenu.add(saveItem);
         menuBar.add(fileMenu);
-        menuBar.add(viewMenu);
 
         return menuBar;
     }

@@ -1,29 +1,20 @@
 package com.scheduler.models;
 
-import java.awt.*;
 import java.util.*;
 import java.time.LocalDate;
-import java.util.List;
 
 public class TaskManager {
     private List<Task> tasks = new ArrayList<>();
-    private List<Category> categories = new ArrayList<>();
-
-    public TaskManager() {
-        // Initialize with default categories
-        categories.add(new Category("Work", Color.BLUE));
-        categories.add(new Category("Personal", Color.GREEN));
-        categories.add(new Category("Family", Color.ORANGE));
-    }
+    private List<Category> categories = new ArrayList<>(); // Changed to modifiable list
 
     public List<Task> getTasks() {
-        return Collections.unmodifiableList(tasks);
+        return tasks; // Now returns modifiable list directly
     }
 
     public List<Task> getTasksForDate(LocalDate date) {
         List<Task> result = new ArrayList<>();
         for (Task task : tasks) {
-            if (task.getDueDate().toLocalDate().equals(date)) {
+            if (task.getDueDate() != null && task.getDueDate().toLocalDate().equals(date)) {
                 result.add(task);
             }
         }
@@ -40,11 +31,6 @@ public class TaskManager {
     }
 
     public List<Category> getCategories() {
-        if (categories.isEmpty()) {
-            // Add default categories if empty
-            categories.add(new Category("Work", Color.BLUE));
-            categories.add(new Category("Personal", Color.GREEN));
-        }
-        return Collections.unmodifiableList(categories);
+        return categories; // Now returns modifiable list directly
     }
 }

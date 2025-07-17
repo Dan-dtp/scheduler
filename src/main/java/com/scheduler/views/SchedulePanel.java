@@ -1,106 +1,143 @@
 package com.scheduler.views;
 
-import com.scheduler.models.Task;
-import com.scheduler.models.TaskManager;
-
+import com.scheduler.models.*;
 import javax.swing.*;
+import javax.swing.table.*;
 import java.awt.*;
 import java.time.*;
 import java.time.format.*;
+import java.util.*;
 import java.util.List;
 
 public class SchedulePanel extends JPanel {
-    private TaskManager taskManager;
-    private JList<DaySchedule> scheduleList;
+    private final TaskManager taskManager;
+    private JTable scheduleTable;
+    private JSpinner weeksSpinner;
 
     public SchedulePanel(TaskManager taskManager) {
         this.taskManager = taskManager;
         setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         initComponents();
-        refreshSchedule();
     }
 
     private void initComponents() {
-        scheduleList = new JList<>();
-        scheduleList.setCellRenderer(new ScheduleCellRenderer());
-        scheduleList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        // Control panel
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
-        JScrollPane scrollPane = new JScrollPane(scheduleList);
-        add(scrollPane, BorderLayout.CENTER);
+        controlPanel.add(new JLabel("Weeks to show:"));
+        weeksSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 12, 1));
+        controlPanel.add(weeksSpinner);
 
-        JToolBar toolBar = new JToolBar();
-        JButton refreshButton = new JButton("Refresh");
-        refreshButton.addActionListener(e -> refreshSchedule());
+        JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.addActionListener(e -> refreshSchedule());
+        controlPanel.add(refreshBtn);
 
-        toolBar.add(refreshButton);
-        add(toolBar, BorderLayout.NORTH);
+        // Table setup
+        scheduleTable = new JTable(new ScheduleTableModel());
+        scheduleTable.setRowHeight(40);
+        scheduleTable.setShowGrid(false);
+        scheduleTable.setIntercellSpacing(new Dimension(0, 5));
+        scheduleTable.setDefaultRenderer(Object.class, new ScheduleTableCellRenderer());
+
+        // Add components
+        add(controlPanel, BorderLayout.NORTH);
+        add(new JScrollPane(scheduleTable), BorderLayout.CENTER);
+
+        refreshSchedule();
+    }
+
+    public void refresh() {
+        refreshSchedule();
     }
 
     private void refreshSchedule() {
-        DefaultListModel<DaySchedule> model = new DefaultListModel<>();
+        ((ScheduleTableModel)scheduleTable.getModel()).refresh();
+    }
 
-        LocalDate today = LocalDate.now();
-        for (int i = 0; i < 7; i++) {
-            LocalDate date = today.plusDays(i);
-            List<Task> tasks = taskManager.getTasksForDate(date);
-            model.addElement(new DaySchedule(date, tasks));
+    private class ScheduleTableModel extends AbstractTableModel {
+        private List<DaySchedule> schedule = new ArrayList<>();
+        private final String[] columnNames = {"Date", "Day", "Tasks"};
+
+        public ScheduleTableModel() {
+            refresh();
         }
 
-        scheduleList.setModel(model);
+        public void refresh() {
+            schedule.clear();
+            LocalDate today = LocalDate.now();
+            int weeks = (Integer)weeksSpinner.getValue();
+
+            for (int i = 0; i < 7 * weeks; i++) {
+                LocalDate date = today.plusDays(i);
+                schedule.add(new DaySchedule(date, taskManager.getTasksForDate(date)));
+            }
+
+            fireTableDataChanged();
+        }
+
+        @Override public int getRowCount() { return schedule.size(); }
+        @Override public int getColumnCount() { return columnNames.length; }
+        @Override public String getColumnName(int col) { return columnNames[col]; }
+
+        @Override
+        public Object getValueAt(int row, int col) {
+            DaySchedule day = schedule.get(row);
+            return switch (col) {
+                case 0 -> day.date.format(DateTimeFormatter.ofPattern("MMM d"));
+                case 1 -> day.date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault());
+                case 2 -> day.tasks;
+                default -> null;
+            };
+        }
+    }
+
+    private class ScheduleTableCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+
+            Component c = super.getTableCellRendererComponent(table, value,
+                    isSelected, hasFocus, row, column);
+
+            DaySchedule day = ((ScheduleTableModel)table.getModel()).schedule.get(row);
+
+            if (column == 2) { // Tasks column
+                JPanel panel = new JPanel(new BorderLayout());
+                panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                panel.setBackground(isSelected ? table.getSelectionBackground() : Color.WHITE);
+
+                JTextArea textArea = new JTextArea();
+                textArea.setEditable(false);
+                textArea.setBackground(panel.getBackground());
+                textArea.setFont(table.getFont());
+
+                if (day.tasks.isEmpty()) {
+                    textArea.setText("No tasks scheduled");
+                    textArea.setForeground(Color.GRAY);
+                } else {
+                    for (Task task : day.tasks) {
+                        textArea.append("• " + task.getTitle() +
+                                " (" + task.getDueDate().format(DateTimeFormatter.ofPattern("h:mm a")) + ")\n");
+                    }
+                }
+
+                panel.add(textArea, BorderLayout.CENTER);
+                return panel;
+            }
+
+            return c;
+        }
     }
 
     private static class DaySchedule {
-        private final LocalDate date;
-        private final List<Task> tasks;
+        final LocalDate date;
+        final List<Task> tasks;
 
-        public DaySchedule(LocalDate date, List<Task> tasks) {
+        DaySchedule(LocalDate date, List<Task> tasks) {
             this.date = date;
             this.tasks = tasks;
-        }
-
-        public String toString() {
-            return date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d")) +
-                    " (" + tasks.size() + " tasks)";
-        }
-    }
-
-    private static class ScheduleCellRenderer extends JPanel implements ListCellRenderer<DaySchedule> {
-        private JLabel dateLabel;
-        private JPanel tasksPanel;
-
-        public ScheduleCellRenderer() {
-            setLayout(new BorderLayout());
-            dateLabel = new JLabel();
-            dateLabel.setFont(dateLabel.getFont().deriveFont(Font.BOLD, 14));
-            tasksPanel = new JPanel();
-            tasksPanel.setLayout(new BoxLayout(tasksPanel, BoxLayout.Y_AXIS));
-
-            add(dateLabel, BorderLayout.NORTH);
-            add(new JScrollPane(tasksPanel), BorderLayout.CENTER);
-            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        }
-
-        @Override
-        public Component getListCellRendererComponent(JList<? extends DaySchedule> list,
-                                                      DaySchedule value, int index, boolean isSelected, boolean cellHasFocus) {
-            dateLabel.setText(value.toString());
-
-            tasksPanel.removeAll();
-            for (Task task : value.tasks) {
-                JLabel taskLabel = new JLabel("• " + task.getTitle());
-                taskLabel.setForeground(task.getPriority().getColor());
-                tasksPanel.add(taskLabel);
-            }
-
-            if (isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-            } else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
-            }
-
-            return this;
         }
     }
 }

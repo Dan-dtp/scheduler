@@ -55,8 +55,10 @@ public class Task implements Comparable<Task> {
 
     @Override
     public int compareTo(Task other) {
-        int dateCompare = this.dueDate.compareTo(other.dueDate);
-        if (dateCompare != 0) return dateCompare;
-        return this.priority.compareTo(other.priority);
+        // Handle null due dates
+        if (this.dueDate == null && other.dueDate == null) return 0;
+        if (this.dueDate == null) return -1;
+        if (other.dueDate == null) return 1;
+        return this.dueDate.compareTo(other.dueDate);
     }
 }

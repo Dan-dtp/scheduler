@@ -1,22 +1,31 @@
 package com.scheduler;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import com.scheduler.views.MainFrame;
+import com.scheduler.views.Theme;
+
 import javax.swing.*;
 
 public class AppMain {
     public static void main(String[] args) {
         // Set modern look and feel
         try {
-            UIManager.setLookAndFeel(new FlatLightLaf());
+            FlatMacLightLaf.setup();
+            Theme.updateUIManager(); // Initialize theme
+
+            UIManager.put("Button.arc", 10);
+            UIManager.put("Component.arc", 10);
+            UIManager.put("ProgressBar.arc", 5);
+            UIManager.put("TextComponent.arc", 5);
         } catch (Exception ex) {
             System.err.println("Failed to initialize LaF");
         }
 
-        // Create and show main frame
         SwingUtilities.invokeLater(() -> {
             MainFrame frame = new MainFrame();
             frame.setVisible(true);
         });
+
     }
 }

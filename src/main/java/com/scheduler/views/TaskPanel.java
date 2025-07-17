@@ -10,17 +10,20 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.time.*;
 import java.util.*;
 import java.util.List;
 
 public class TaskPanel extends JPanel {
     private TaskManager taskManager;
+    private final Runnable refreshCallback; // Add this field
     private JTable taskTable;
     private TaskTableModel tableModel;
 
-    public TaskPanel(TaskManager taskManager) {
+    public TaskPanel(TaskManager taskManager, Runnable refreshCallback) {
         this.taskManager = taskManager;
+        this.refreshCallback = refreshCallback;
         setLayout(new BorderLayout());
         initComponents();
     }
@@ -102,11 +105,7 @@ public class TaskPanel extends JPanel {
                 (JFrame)SwingUtilities.getWindowAncestor(this),
                 taskManager,
                 task,
-                () -> {
-                    // This lambda will refresh the table after save
-                    tableModel.filter(t -> true);  // Reset any filters
-                    tableModel.fireTableDataChanged();
-                }
+                refreshCallback // Use the field here
         );
         dialog.setVisible(true);
     }
@@ -137,6 +136,24 @@ public class TaskPanel extends JPanel {
         public TaskTableModel(TaskManager taskManager) {
             this.taskManager = taskManager;
             this.filteredTasks = new ArrayList<>(taskManager.getTasks());
+        }
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column == 5; // Only make "Completed" column editable
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int column) {
+            Task task = filteredTasks.get(row);
+            if (column == 5) { // Completed column
+                task.setCompleted((Boolean) value);
+                fireTableCellUpdated(row, column);
+                try {
+                    StorageManager.saveData(taskManager);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
 
         public void filter(java.util.function.Predicate<Task> predicate) {
@@ -190,6 +207,11 @@ public class TaskPanel extends JPanel {
                 default: return null;
             }
         }
+    }
+
+    public void refresh() {
+        tableModel.filter(task -> true); // Reset any filters
+        tableModel.fireTableDataChanged();
     }
 
     // DocumentAdapter for text field changes
