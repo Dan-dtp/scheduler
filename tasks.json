@@ -1,92 +1,114 @@
-[
-  {
-    "id": "2736ac07-b77d-47f6-a0e5-a9ae309baea1",
-    "title": "dvs dsvv",
-    "description": "sd sd ds sd",
-    "priority": "HIGH",
-    "dueDate": "2025-07-17T21:19:26.770",
-    "category": {
-      "name": "Work",
-      "color": {
-        "r": 255,
-        "g": 0,
-        "b": 0
-      }
+{
+  "tasks": [
+    {
+      "id": "757979e0-c4f6-406d-b350-6f7f044b737c",
+      "title": "dssg",
+      "description": "ssgbds",
+      "priority": "HIGH",
+      "dueDate": "2025-07-17T22:47",
+      "category": {
+        "name": "Work",
+        "color": {
+          "r": 255,
+          "g": 0,
+          "b": 0
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
     },
-    "completed": false,
-    "tags": [],
-    "subtasks": []
-  },
-  {
-    "id": "99d9a191-f610-4b7d-bdd6-fceea721ea99",
-    "title": "dgsvdsvdsvsd",
-    "description": "svdfsbfbfbs",
-    "priority": "MEDIUM",
-    "dueDate": "2025-07-17T22:20",
-    "category": {
-      "name": "Work",
-      "color": {
-        "r": 255,
-        "g": 0,
-        "b": 0
-      }
+    {
+      "id": "fdf5a0ed-cd1c-41c6-a974-ad1845930146",
+      "title": "sbfsdbdf",
+      "description": "sbdfbfds",
+      "priority": "HIGH",
+      "dueDate": "2025-07-17T23:47",
+      "category": {
+        "name": "Work",
+        "color": {
+          "r": 255,
+          "g": 0,
+          "b": 0
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
     },
-    "completed": false,
-    "tags": [],
-    "subtasks": []
-  },
-  {
-    "id": "a1a2950d-d8f9-455d-a7b8-182912034834",
-    "title": "bdfgfbnytnryn",
-    "description": "bsbsevwvwe",
-    "priority": "HIGH",
-    "dueDate": "2025-07-18T18:19",
-    "category": {
-      "name": "Work",
-      "color": {
-        "r": 255,
-        "g": 0,
-        "b": 0
-      }
+    {
+      "id": "aa08d355-9c39-43a0-b21c-dddf83764976",
+      "title": "sdvsdv",
+      "description": "sdvdsv",
+      "priority": "MEDIUM",
+      "dueDate": "2025-07-18T18:46",
+      "category": {
+        "name": "Family",
+        "color": {
+          "r": 0,
+          "g": 255,
+          "b": 0
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
     },
-    "completed": false,
-    "tags": [],
-    "subtasks": []
-  },
-  {
-    "id": "ec7de6d7-bbd1-4edf-a325-0d5989f14cf2",
-    "title": "asbsfbsfbsfb",
-    "description": "sfbsabasvbsfvb",
-    "priority": "MEDIUM",
-    "dueDate": "2025-07-21T17:19",
-    "category": {
-      "name": "Personal",
-      "color": {
-        "r": 0,
-        "g": 0,
-        "b": 255
-      }
+    {
+      "id": "24c7d372-b088-4154-81a5-5f1f9aef85f5",
+      "title": "dvsdvsvvzdvzvzv",
+      "description": "zvsregrgs",
+      "priority": "HIGH",
+      "dueDate": "2025-07-21T14:46",
+      "category": {
+        "name": "Other",
+        "color": {
+          "r": 128,
+          "g": 128,
+          "b": 128
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
     },
-    "completed": false,
-    "tags": [],
-    "subtasks": []
-  },
-  {
-    "id": "83ffc136-9e9c-42d4-a7fd-cc68be81d915",
-    "title": "xsfxc vsffssf",
-    "description": "sbsssfbfsv",
-    "priority": "LOW",
-    "dueDate": "2025-07-23T18:20",
-    "category": {
-      "name": "Family",
-      "color": {
-        "r": 0,
-        "g": 255,
-        "b": 0
-      }
-    },
-    "completed": false,
-    "tags": [],
-    "subtasks": []
-  }
-]
+    {
+      "id": "d1f4e70e-d7e8-449c-bf0c-2338293b51ab",
+      "title": "dvsdvs",
+      "description": "sdvsdv",
+      "priority": "LOW",
+      "dueDate": "2025-07-22T15:46",
+      "category": {
+        "name": "Family",
+        "color": {
+          "r": 0,
+          "g": 255,
+          "b": 0
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
+    }
+  ],
+  "completedTasks": [
+    {
+      "id": "a3f0cb2f-0064-4361-915a-48dab171b9cb",
+      "title": "sdvdsvs",
+      "description": "sdvdsv",
+      "priority": "HIGH",
+      "dueDate": "2025-07-17T21:46:00.521",
+      "category": {
+        "name": "Work",
+        "color": {
+          "r": 255,
+          "g": 0,
+          "b": 0
+        }
+      },
+      "completed": true,
+      "tags": [],
+      "subtasks": []
+    }
+  ]
+}

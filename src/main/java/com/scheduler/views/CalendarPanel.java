@@ -129,9 +129,15 @@ public class CalendarPanel extends JPanel {
             tasksArea.setFont(tasksArea.getFont().deriveFont(12f));
 
             if (!tasks.isEmpty()) {
+                StringBuilder tasksText = new StringBuilder();
                 for (Task task : tasks) {
-                    tasksArea.append("• " + task.getTitle() + "\n");
+                    tasksText.append("• ")
+                            .append(task.getTitle())
+                            .append(" (")
+                            .append(task.getDueDate().format(DateTimeFormatter.ofPattern("h:mm a")))
+                            .append(")\n");
                 }
+                tasksArea.setText(tasksText.toString());
             } else {
                 tasksArea.setText("No tasks");
                 tasksArea.setForeground(Theme.TEXT_SECONDARY);

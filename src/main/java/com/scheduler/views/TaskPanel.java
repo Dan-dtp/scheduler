@@ -35,6 +35,15 @@ public class TaskPanel extends JPanel {
         updateComponentTheme(this);
     }
 
+    public void refresh() {
+        SwingUtilities.invokeLater(() -> {
+            tableModel.refreshData();
+            tableModel.fireTableDataChanged();
+            revalidate();
+            repaint();
+        });
+    }
+
     private void updateComponentTheme(Container container) {
         for (Component comp : container.getComponents()) {
             comp.setBackground(Theme.BACKGROUND);
@@ -215,12 +224,16 @@ public class TaskPanel extends JPanel {
         @Override
         public void setValueAt(Object value, int row, int column) {
             Task task = filteredTasks.get(row);
-            if (column == 5) {
+            if (column == 5) { // Completed column
                 boolean completed = (Boolean)value;
                 task.setCompleted(completed);
                 if (completed) {
                     taskManager.completeTask(task);
-                    refreshCallback.run();
+                    filteredTasks.remove(row);
+                    fireTableRowsDeleted(row, row);
+                    if (refreshCallback != null) {
+                        refreshCallback.run();
+                    }
                 }
             }
         }

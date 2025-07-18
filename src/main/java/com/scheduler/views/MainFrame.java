@@ -53,7 +53,7 @@ public class MainFrame extends JFrame {
         taskPanel = new TaskPanel(taskManager, this::refreshAllViews);
         calendarPanel = new CalendarPanel(taskManager);
         schedulePanel = new SchedulePanel(taskManager);
-        completedTasksPanel = new CompletedTasksPanel(taskManager);
+        completedTasksPanel = new CompletedTasksPanel(taskManager, this::refreshAllViews);
 
         // Create tabbed pane with modern styling
         tabbedPane = new JTabbedPane();
@@ -80,11 +80,10 @@ public class MainFrame extends JFrame {
 
     public void refreshAllViews() {
         SwingUtilities.invokeLater(() -> {
-            taskPanel.revalidate();
-            taskPanel.repaint();
-            calendarPanel.refresh();
-            schedulePanel.refresh();
-            completedTasksPanel.refresh();
+            if (taskPanel != null) taskPanel.refresh();
+            if (calendarPanel != null) calendarPanel.refresh();
+            if (schedulePanel != null) schedulePanel.refresh();
+            if (completedTasksPanel != null) completedTasksPanel.refresh();
         });
     }
 

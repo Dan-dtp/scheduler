@@ -16,9 +16,12 @@ import java.util.List;
 public class CompletedTasksPanel extends JPanel {
     private final TaskManager taskManager;
     private JTable completedTable;
+    private final Runnable refreshCallback;
 
-    public CompletedTasksPanel(TaskManager taskManager) {
+
+    public CompletedTasksPanel(TaskManager taskManager, Runnable refreshCallback) {
         this.taskManager = taskManager;
+        this.refreshCallback = refreshCallback;
         setLayout(new BorderLayout());
         setBackground(new Color(245, 245, 255));
         initComponents();
@@ -45,6 +48,11 @@ public class CompletedTasksPanel extends JPanel {
 
         public CompletedTasksTableModel() {
             this.completedTasks = new ArrayList<>(taskManager.getCompletedTasks());
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column == 5; // Make completed column editable
         }
 
         public void refresh() {
@@ -76,6 +84,23 @@ public class CompletedTasksPanel extends JPanel {
                 case 3: return LocalDateTime.class;
                 case 4: return Category.class;
                 default: return Object.class;
+            }
+        }
+
+        @Override
+        public void setValueAt(Object value, int row, int column) {
+            Task task = completedTasks.get(row);
+            if (column == 5) { // Completed column
+                boolean completed = (Boolean)value;
+                task.setCompleted(completed);
+                if (!completed) {
+                    taskManager.uncompleteTask(task);
+                    completedTasks.remove(row);
+                    fireTableRowsDeleted(row, row);
+                    if (refreshCallback != null) {
+                        refreshCallback.run();
+                    }
+                }
             }
         }
 

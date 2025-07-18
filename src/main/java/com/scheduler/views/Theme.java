@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class Theme {
     // Primary colors
-    public static final Color PRIMARY = new Color(100, 180, 255);  // Sky blue
+    public static final Color PRIMARY = new Color(70, 130, 180);  // Steel blue
     public static final Color SECONDARY = new Color(255, 150, 100); // Coral
     public static final Color ACCENT = new Color(180, 220, 130); // Green
 

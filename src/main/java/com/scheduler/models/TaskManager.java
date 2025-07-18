@@ -19,6 +19,13 @@ public class TaskManager {
         return new ArrayList<>(completedTasks);
     }
 
+    public synchronized void uncompleteTask(Task task) {
+        if (completedTasks.remove(task)) {
+            tasks.add(task);
+            Collections.sort(tasks);
+        }
+    }
+
     public synchronized List<Task> getTasks() {
         return new ArrayList<>(tasks); // Return defensive copy
     }

@@ -23,11 +23,12 @@ public class StorageManager {
             .create();
 
     public static void saveData(TaskManager taskManager) throws IOException {
-        List<Task> tasks = taskManager.getTasks();
-        System.out.println("[DEBUG] Saving " + tasks.size() + " tasks to file");
+        JsonObject data = new JsonObject();
+        data.add("tasks", gson.toJsonTree(taskManager.getTasks()));
+        data.add("completedTasks", gson.toJsonTree(taskManager.getCompletedTasks()));
 
         try (Writer writer = new FileWriter(TASKS_FILE)) {
-            gson.toJson(tasks, writer);
+            gson.toJson(data, writer);
         }
     }
 
