@@ -27,29 +27,29 @@ Smart Scheduler Pro is a comprehensive Java-based task management application de
 
 ### Core Task Management
 
-✅ Create, edit, and delete tasks with titles, descriptions, and due dates
-✅ Set task priorities (High, Medium, Low) with color coding
-✅ Organize tasks by customizable categories with color coding
-✅ Mark tasks as complete/incomplete
-✅ Add subtasks to break down complex tasks
-✅ Tag system for additional organization
+1. ✅  Create, edit, and delete tasks with titles, descriptions, and due dates
+2. ✅  Set task priorities (High, Medium, Low) with color coding
+3. ✅  Organize tasks by customizable categories with color coding
+4. ✅ Mark tasks as complete/incomplete
+5. ✅  Add subtasks to break down complex tasks
+6. ✅  Tag system for additional organization
 
 ### Advanced Features
 
-🔄 Recurring tasks with flexible scheduling options
-📅 Multiple views:
-Table view with filtering/sorting
-Calendar view (monthly)
-Schedule view (weekly overview)
-Completed tasks view
-🔍 Powerful filtering and searching capabilities
-🎨 Modern UI with FlatLaf theming and custom styling
+1. 🔄  Recurring tasks with flexible scheduling options
+2. 📅  Multiple views:
+3.  Table view with filtering/sorting
+4.  Calendar view (monthly)
+5.  Schedule view (weekly overview)
+6.  Completed tasks view
+7. 🔍  Powerful filtering and searching capabilities
+8. 🎨  Modern UI with FlatLaf theming and custom styling
 
 ### Data Management
 
-💾 Automatic saving of tasks and settings
-🔄 JSON-based data storage for easy backup and transfer
-🛡️ Defensive data handling to prevent corruption
+1. 💾  Automatic saving of tasks and settings
+2. 🔄  JSON-based data storage for easy backup and transfer
+3. 🛡️  Defensive data handling to prevent corruption
 
 ## Installation
 
