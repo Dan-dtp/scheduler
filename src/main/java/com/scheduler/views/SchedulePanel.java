@@ -29,7 +29,7 @@ public class SchedulePanel extends JPanel {
         Theme.applyModernPanelStyle(controlPanel);
 
         JLabel weeksLabel = new JLabel("Weeks to show:");
-        weeksLabel.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+        weeksLabel.setForeground(Theme.TEXT_PRIMARY);
 
         weeksSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 12, 1));
 
@@ -111,18 +111,17 @@ public class SchedulePanel extends JPanel {
             if (column == 2) { // Tasks column
                 JPanel panel = new JPanel(new BorderLayout());
                 panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                panel.setBackground(isSelected ? table.getSelectionBackground() :
-                        (Theme.isDarkMode() ? Theme.CARD_BACKGROUND_DARK : Theme.CARD_BACKGROUND_LIGHT));
+                panel.setBackground(isSelected ? table.getSelectionBackground() : Theme.CARD_BACKGROUND);
 
                 JTextArea textArea = new JTextArea();
                 textArea.setEditable(false);
                 textArea.setBackground(panel.getBackground());
-                textArea.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+                textArea.setForeground(Theme.TEXT_PRIMARY);
                 textArea.setFont(table.getFont());
 
                 if (day.tasks.isEmpty()) {
                     textArea.setText("No tasks scheduled");
-                    textArea.setForeground(Theme.isDarkMode() ? Theme.TEXT_SECONDARY_DARK : Theme.TEXT_SECONDARY_LIGHT);
+                    textArea.setForeground(Theme.TEXT_SECONDARY);
                 } else {
                     for (Task task : day.tasks) {
                         textArea.append("• " + task.getTitle() +
@@ -134,8 +133,8 @@ public class SchedulePanel extends JPanel {
                 return panel;
             }
 
-            c.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
-            c.setBackground(Theme.isDarkMode() ? Theme.BACKGROUND_DARK : Theme.BACKGROUND_LIGHT);
+            c.setForeground(Theme.TEXT_PRIMARY);
+            c.setBackground(Theme.BACKGROUND);
             return c;
         }
     }

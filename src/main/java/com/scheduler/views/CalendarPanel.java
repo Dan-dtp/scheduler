@@ -35,6 +35,7 @@ public class CalendarPanel extends JPanel {
         JButton nextBtn = new JButton("→");
         monthLabel = new JLabel("", SwingConstants.CENTER);
         monthLabel.setFont(monthLabel.getFont().deriveFont(Font.BOLD, 16));
+        monthLabel.setForeground(Theme.TEXT_PRIMARY);
 
         JButton todayBtn = new JButton("Refresh");
 
@@ -86,14 +87,14 @@ public class CalendarPanel extends JPanel {
 
         monthLabel.setText(currentYearMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault())
                 + " " + currentYearMonth.getYear());
-        monthLabel.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+        monthLabel.setForeground(Theme.TEXT_PRIMARY);
 
         // Day headers
         String[] dayNames = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
         for (String day : dayNames) {
             JLabel label = new JLabel(day, SwingConstants.CENTER);
             label.setFont(label.getFont().deriveFont(Font.BOLD));
-            label.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+            label.setForeground(Theme.TEXT_PRIMARY);
             calendarGrid.add(label);
         }
 
@@ -117,14 +118,14 @@ public class CalendarPanel extends JPanel {
             // Day number
             JLabel dayLabel = new JLabel(String.valueOf(day), SwingConstants.CENTER);
             dayLabel.setFont(dayLabel.getFont().deriveFont(Font.BOLD));
-            dayLabel.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+            dayLabel.setForeground(Theme.TEXT_PRIMARY);
             dayPanel.add(dayLabel, BorderLayout.NORTH);
 
             // Tasks list
             JTextArea tasksArea = new JTextArea();
             tasksArea.setEditable(false);
-            tasksArea.setBackground(Theme.isDarkMode() ? Theme.CARD_BACKGROUND_DARK : Theme.CARD_BACKGROUND_LIGHT);
-            tasksArea.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+            tasksArea.setBackground(Theme.CARD_BACKGROUND);
+            tasksArea.setForeground(Theme.TEXT_PRIMARY);
             tasksArea.setFont(tasksArea.getFont().deriveFont(12f));
 
             if (!tasks.isEmpty()) {
@@ -133,7 +134,7 @@ public class CalendarPanel extends JPanel {
                 }
             } else {
                 tasksArea.setText("No tasks");
-                tasksArea.setForeground(Theme.isDarkMode() ? Theme.TEXT_SECONDARY_DARK : Theme.TEXT_SECONDARY_LIGHT);
+                tasksArea.setForeground(Theme.TEXT_SECONDARY);
             }
 
             dayPanel.add(new JScrollPane(tasksArea), BorderLayout.CENTER);

@@ -11,11 +11,11 @@
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/views/SchedulePanel.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/utils/TaskFilter.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/utils/DateUtils.java
+/Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/views/CompletedTasksPanel.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/controllers/CalendarController.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/models/Task.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/models/Subtask.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/views/dialogs/RecurrenceDialog.java
-/Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/views/AnalyticsPanel.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/models/TaskManager.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/AppMain.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/utils/StorageManager.java

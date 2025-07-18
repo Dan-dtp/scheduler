@@ -1,126 +1,73 @@
 package com.scheduler.views;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
-
 import javax.swing.*;
 import java.awt.*;
 
 public class Theme {
-    // Light Theme Colors
-    public static final Color PRIMARY_LIGHT = new Color(70, 130, 180);
-    public static final Color SECONDARY_LIGHT = new Color(255, 165, 0);
-    public static final Color BACKGROUND_LIGHT = new Color(245, 245, 245);
-    public static final Color CARD_BACKGROUND_LIGHT = Color.WHITE;
-    public static final Color TEXT_PRIMARY_LIGHT = new Color(60, 60, 60);
-    public static final Color TEXT_SECONDARY_LIGHT = new Color(120, 120, 120);
-    public static final Color BORDER_LIGHT = new Color(220, 220, 220);
+    // Primary colors
+    public static final Color PRIMARY = new Color(100, 180, 255);  // Sky blue
+    public static final Color SECONDARY = new Color(255, 150, 100); // Coral
+    public static final Color ACCENT = new Color(180, 220, 130); // Green
 
-    // Dark Theme Colors
-    public static final Color PRIMARY_DARK = new Color(100, 150, 200);
-    public static final Color SECONDARY_DARK = new Color(255, 185, 50);
-    public static final Color BACKGROUND_DARK = new Color(45, 45, 45);
-    public static final Color CARD_BACKGROUND_DARK = new Color(60, 60, 60);
-    public static final Color TEXT_PRIMARY_DARK = new Color(220, 220, 220);
-    public static final Color TEXT_SECONDARY_DARK = new Color(180, 180, 180);
-    public static final Color BORDER_DARK = new Color(80, 80, 80);
+    // Background colors
+    public static final Color BACKGROUND = new Color(245, 250, 255); // Very light blue
+    public static final Color CARD_BACKGROUND = Color.WHITE;
 
-    // Fonts
-    public static final Font HEADER_FONT = new Font("Segoe UI", Font.BOLD, 16);
-    public static final Font SUBHEADER_FONT = new Font("Segoe UI", Font.PLAIN, 14);
-    public static final Font BODY_FONT = new Font("Segoe UI", Font.PLAIN, 12);
+    // Text colors
+    public static final Color TEXT_PRIMARY = new Color(60, 60, 80);
+    public static final Color TEXT_SECONDARY = new Color(120, 120, 140);
 
-    private static boolean darkMode = false;
-
-    public static boolean isDarkMode() {
-        return darkMode;
-    }
-
-    public static void toggleDarkMode() {
-        darkMode = !darkMode;
-        try {
-            if (darkMode) {
-                UIManager.setLookAndFeel(new FlatDarkLaf());
-            } else {
-                UIManager.setLookAndFeel(new FlatLightLaf());
-            }
-            updateUIManager();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void updateUIManager() {
-        if (darkMode) {
-            UIManager.put("Panel.background", BACKGROUND_DARK);
-            UIManager.put("Table.background", CARD_BACKGROUND_DARK);
-            UIManager.put("Table.foreground", TEXT_PRIMARY_DARK);
-            UIManager.put("Table.gridColor", BORDER_DARK);
-            UIManager.put("TableHeader.background", PRIMARY_DARK);
-            UIManager.put("TableHeader.foreground", Color.WHITE);
-            UIManager.put("TextField.background", CARD_BACKGROUND_DARK);
-            UIManager.put("TextField.foreground", TEXT_PRIMARY_DARK);
-            UIManager.put("TextArea.background", CARD_BACKGROUND_DARK);
-            UIManager.put("TextArea.foreground", TEXT_PRIMARY_DARK);
-            UIManager.put("ComboBox.background", CARD_BACKGROUND_DARK);
-            UIManager.put("ComboBox.foreground", TEXT_PRIMARY_DARK);
-        } else {
-            UIManager.put("Panel.background", BACKGROUND_LIGHT);
-            UIManager.put("Table.background", CARD_BACKGROUND_LIGHT);
-            UIManager.put("Table.foreground", TEXT_PRIMARY_LIGHT);
-            UIManager.put("Table.gridColor", BORDER_LIGHT);
-            UIManager.put("TableHeader.background", PRIMARY_LIGHT);
-            UIManager.put("TableHeader.foreground", Color.WHITE);
-            UIManager.put("TextField.background", CARD_BACKGROUND_LIGHT);
-            UIManager.put("TextField.foreground", TEXT_PRIMARY_LIGHT);
-            UIManager.put("TextArea.background", CARD_BACKGROUND_LIGHT);
-            UIManager.put("TextArea.foreground", TEXT_PRIMARY_LIGHT);
-            UIManager.put("ComboBox.background", CARD_BACKGROUND_LIGHT);
-            UIManager.put("ComboBox.foreground", TEXT_PRIMARY_LIGHT);
-        }
-    }
+    // Other colors
+    public static final Color BORDER = new Color(210, 225, 240);
+    public static final Color COMPLETED = new Color(200, 230, 200); // Light green
+    public static final Color HIGHLIGHT = new Color(255, 200, 100); // Yellow
 
     public static void applyButtonStyle(JButton button) {
-        button.setBackground(isDarkMode() ? PRIMARY_DARK : PRIMARY_LIGHT);
+        button.setBackground(PRIMARY);
         button.setForeground(Color.WHITE);
         button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-        button.setFont(BODY_FONT);
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(PRIMARY.darker(), 1),
+                BorderFactory.createEmptyBorder(8, 15, 8, 15)
+        ));
+    }
+
+    public static void applyCompletedStyle(JComponent comp) {
+        comp.setBackground(COMPLETED);
+        comp.setBorder(BorderFactory.createLineBorder(COMPLETED.darker()));
     }
 
     public static void applyModernPanelStyle(JPanel panel) {
-        panel.setBackground(isDarkMode() ? BACKGROUND_DARK : BACKGROUND_LIGHT);
-        panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        panel.setBackground(BACKGROUND);
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     }
 
-    public static void applyCardStyle(JPanel card) {
-        card.setBackground(isDarkMode() ? CARD_BACKGROUND_DARK : CARD_BACKGROUND_LIGHT);
-        card.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(isDarkMode() ? BORDER_DARK : BORDER_LIGHT),
+    public static void applyCardStyle(JPanel panel) {
+        panel.setBackground(CARD_BACKGROUND);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(BORDER, 1),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
     }
 
     public static void applyTableStyle(JTable table) {
-        table.setBackground(isDarkMode() ? CARD_BACKGROUND_DARK : CARD_BACKGROUND_LIGHT);
-        table.setForeground(isDarkMode() ? TEXT_PRIMARY_DARK : TEXT_PRIMARY_LIGHT);
-        table.setGridColor(isDarkMode() ? BORDER_DARK : BORDER_LIGHT);
-        table.setSelectionBackground(isDarkMode() ? PRIMARY_DARK : PRIMARY_LIGHT);
+        table.setBackground(CARD_BACKGROUND);
+        table.setForeground(TEXT_PRIMARY);
+        table.setGridColor(BORDER);
+        table.setSelectionBackground(PRIMARY);
         table.setSelectionForeground(Color.WHITE);
-        table.setFont(BODY_FONT);
+        table.setFont(table.getFont().deriveFont(Font.PLAIN, 12));
         table.setRowHeight(30);
-        table.setShowGrid(false);
-        table.setIntercellSpacing(new Dimension(0, 0));
-        table.setFillsViewportHeight(true);
+        table.setShowGrid(true);
     }
 
-    public static void refreshAllComponents(Component component) {
-        if (component instanceof Container) {
-            for (Component child : ((Container)component).getComponents()) {
-                refreshAllComponents(child);
-            }
-        }
-        component.revalidate();
-        component.repaint();
+    public static void updateUIManager() {
+        UIManager.put("Panel.background", BACKGROUND);
+        UIManager.put("Label.foreground", TEXT_PRIMARY);
+        UIManager.put("Table.background", CARD_BACKGROUND);
+        UIManager.put("Table.foreground", TEXT_PRIMARY);
+        UIManager.put("Table.gridColor", BORDER);
+        UIManager.put("TableHeader.background", PRIMARY);
+        UIManager.put("TableHeader.foreground", Color.WHITE);
     }
 }

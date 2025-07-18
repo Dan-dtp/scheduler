@@ -12,13 +12,13 @@ public class MainFrame extends JFrame {
     private TaskPanel taskPanel;
     private CalendarPanel calendarPanel;
     private SchedulePanel schedulePanel;
-    private AnalyticsPanel analyticsPanel; // Changed from StatsPanel
+    private CompletedTasksPanel completedTasksPanel;
 
     public MainFrame() {
         initModels();
         initUI();
         initListeners();
-        setJMenuBar(createMenuBar());
+        Theme.updateUIManager();
     }
 
     private void initModels() {
@@ -48,24 +48,12 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Add dark mode toggle to menu
-        JMenuBar menuBar = createMenuBar();
-        JMenu themeMenu = new JMenu("Theme");
-        JMenuItem toggleThemeItem = new JMenuItem("Toggle Dark Mode");
-        toggleThemeItem.addActionListener(e -> {
-            Theme.toggleDarkMode();
-            refreshAllViews();
-        });
-        themeMenu.add(toggleThemeItem);
-        menuBar.add(themeMenu);
-        setJMenuBar(menuBar);
-
 
         // Initialize panels
         taskPanel = new TaskPanel(taskManager, this::refreshAllViews);
         calendarPanel = new CalendarPanel(taskManager);
         schedulePanel = new SchedulePanel(taskManager);
-        analyticsPanel = new AnalyticsPanel(taskManager);
+        completedTasksPanel = new CompletedTasksPanel(taskManager);
 
         // Create tabbed pane with modern styling
         tabbedPane = new JTabbedPane();
@@ -76,7 +64,11 @@ public class MainFrame extends JFrame {
         tabbedPane.addTab("Tasks", new ImageIcon(), taskPanel);
         tabbedPane.addTab("Calendar", new ImageIcon(), calendarPanel);
         tabbedPane.addTab("Schedule", new ImageIcon(), schedulePanel);
-        tabbedPane.addTab("Analytics", new ImageIcon(), analyticsPanel);
+        tabbedPane.addTab("Completed", new ImageIcon(), completedTasksPanel);
+
+        // Set colorful tabbed pane
+        tabbedPane.setBackground(new Color(230, 240, 255));
+        tabbedPane.setForeground(new Color(70, 130, 180));
 
         // Main panel with padding
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -88,10 +80,11 @@ public class MainFrame extends JFrame {
 
     public void refreshAllViews() {
         SwingUtilities.invokeLater(() -> {
-            taskPanel.refresh();
+            taskPanel.revalidate();
+            taskPanel.repaint();
             calendarPanel.refresh();
             schedulePanel.refresh();
-            analyticsPanel.refresh();
+            completedTasksPanel.refresh();
         });
     }
 
@@ -112,18 +105,6 @@ public class MainFrame extends JFrame {
 
         // Theme menu
         JMenu themeMenu = new JMenu("Theme");
-        JMenuItem toggleThemeItem = new JMenuItem("Toggle Dark Mode");
-        toggleThemeItem.addActionListener(e -> {
-            Theme.toggleDarkMode();
-
-            // Force complete UI refresh
-            SwingUtilities.invokeLater(() -> {
-                SwingUtilities.updateComponentTreeUI(this);
-                refreshAllViews();
-            });
-        });
-        themeMenu.add(toggleThemeItem);
-
         menuBar.add(fileMenu);
         menuBar.add(themeMenu);
 

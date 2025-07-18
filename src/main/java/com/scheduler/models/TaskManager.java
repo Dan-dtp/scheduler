@@ -6,6 +6,18 @@ import java.time.LocalDate;
 public class TaskManager {
     private List<Task> tasks = new ArrayList<>();
     private List<Category> categories = new ArrayList<>(); // Changed to modifiable list
+    private List<Task> completedTasks = new ArrayList<>();
+
+    public void completeTask(Task task) {
+        if (tasks.remove(task)) {
+            completedTasks.add(task);
+            Collections.sort(completedTasks);
+        }
+    }
+
+    public List<Task> getCompletedTasks() {
+        return new ArrayList<>(completedTasks);
+    }
 
     public synchronized List<Task> getTasks() {
         return new ArrayList<>(tasks); // Return defensive copy

@@ -11,7 +11,8 @@ public class PriorityRenderer extends DefaultTableCellRenderer {
     // In your PriorityRenderer class
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
-                                                   boolean isSelected, boolean hasFocus, int row, int column) {
+                                                   boolean isSelected, boolean hasFocus,
+                                                   int row, int column) {
         Component c = super.getTableCellRendererComponent(table, value,
                 isSelected, hasFocus, row, column);
 
@@ -20,10 +21,8 @@ public class PriorityRenderer extends DefaultTableCellRenderer {
             c.setBackground(priority.getColor());
             c.setForeground(Color.WHITE);
         } else {
-            c.setBackground(Theme.isDarkMode() ?
-                    Theme.CARD_BACKGROUND_DARK : Theme.CARD_BACKGROUND_LIGHT);
-            c.setForeground(Theme.isDarkMode() ?
-                    Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+            c.setBackground(Theme.CARD_BACKGROUND);
+            c.setForeground(Theme.TEXT_PRIMARY);
         }
 
         return c;

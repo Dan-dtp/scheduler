@@ -8,6 +8,7 @@ import com.scheduler.views.dialogs.TaskDialog;
 
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -26,10 +27,47 @@ public class TaskPanel extends JPanel {
         this.refreshCallback = refreshCallback;
         setLayout(new BorderLayout());
         initComponents();
+        setupTheme();
+    }
+
+    private void setupTheme() {
+        setBackground(Theme.BACKGROUND);
+        updateComponentTheme(this);
+    }
+
+    private void updateComponentTheme(Container container) {
+        for (Component comp : container.getComponents()) {
+            comp.setBackground(Theme.BACKGROUND);
+            comp.setForeground(Theme.TEXT_PRIMARY);
+
+            if (comp instanceof JLabel) {
+                ((JLabel)comp).setForeground(Theme.TEXT_PRIMARY);
+            }
+            else if (comp instanceof AbstractButton) {
+                if (comp instanceof JButton) {
+                    Theme.applyButtonStyle((JButton)comp);
+                } else {
+                    AbstractButton button = (AbstractButton)comp;
+                    button.setBackground(Theme.PRIMARY);
+                    button.setForeground(Color.WHITE);
+                }
+            }
+            else if (comp instanceof JTextComponent) {
+                comp.setBackground(Theme.CARD_BACKGROUND);
+            }
+            else if (comp instanceof JScrollPane) {
+                JScrollPane scrollPane = (JScrollPane)comp;
+                scrollPane.getViewport().setBackground(Theme.CARD_BACKGROUND);
+                scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER));
+            }
+
+            if (comp instanceof Container) {
+                updateComponentTheme((Container)comp);
+            }
+        }
     }
 
     private void initComponents() {
-        // Apply theme to main panel
         Theme.applyModernPanelStyle(this);
 
         // Create table model
@@ -42,10 +80,10 @@ public class TaskPanel extends JPanel {
         taskTable.setDefaultRenderer(Category.class, new CategoryRenderer());
         taskTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        // Toolbar - changed from JPanel to JToolBar
+        // Toolbar
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
-        toolBar.setBackground(Theme.isDarkMode() ? Theme.BACKGROUND_DARK : Theme.BACKGROUND_LIGHT);
+        toolBar.setBackground(Theme.BACKGROUND);
 
         JButton addButton = new JButton("Add Task");
         JButton editButton = new JButton("Edit");
@@ -63,7 +101,7 @@ public class TaskPanel extends JPanel {
         toolBar.add(editButton);
         toolBar.add(deleteButton);
 
-        // Filter panel - remains as JPanel
+        // Filter panel
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         Theme.applyModernPanelStyle(filterPanel);
 
@@ -75,12 +113,17 @@ public class TaskPanel extends JPanel {
         searchField.getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
             protected void changed() {
-                filterTasks(searchField.getText(), (Priority)priorityFilter.getSelectedItem());
+                String searchText = searchField.getText().trim();
+                Priority priority = (Priority)priorityFilter.getSelectedItem();
+                filterTasks(searchText, priority);
             }
         });
 
-        priorityFilter.addActionListener(e ->
-                filterTasks(searchField.getText(), (Priority)priorityFilter.getSelectedItem()));
+        priorityFilter.addActionListener(e -> {
+            String searchText = searchField.getText().trim();
+            Priority priority = (Priority)priorityFilter.getSelectedItem();
+            filterTasks(searchText, priority);
+        });
 
         filterPanel.add(new JLabel("Search:"));
         filterPanel.add(searchField);
@@ -90,20 +133,21 @@ public class TaskPanel extends JPanel {
         // Add components
         add(filterPanel, BorderLayout.NORTH);
         add(new JScrollPane(taskTable), BorderLayout.CENTER);
-        add(toolBar, BorderLayout.SOUTH);  // Changed from panel to toolBar
+        add(toolBar, BorderLayout.SOUTH);
     }
 
-    private void filterTasks(String searchText, Priority priorityFilter) {
+    private void filterTasks(String searchText, Priority priority) {
         tableModel.filter(task -> {
             boolean matches = true;
 
             if (searchText != null && !searchText.isEmpty()) {
-                matches &= task.getTitle().toLowerCase().contains(searchText.toLowerCase()) ||
-                        task.getDescription().toLowerCase().contains(searchText.toLowerCase());
+                String searchLower = searchText.toLowerCase();
+                matches &= (task.getTitle().toLowerCase().contains(searchLower) ||
+                        task.getDescription().toLowerCase().contains(searchLower));
             }
 
-            if (priorityFilter != null) {
-                matches &= task.getPriority() == priorityFilter;
+            if (priority != null) {
+                matches &= (task.getPriority() == priority);
             }
 
             return matches;
@@ -116,7 +160,6 @@ public class TaskPanel extends JPanel {
                 taskManager,
                 task,
                 () -> {
-                    // Force immediate and complete refresh
                     refreshImmediately();
                 }
         );
@@ -124,18 +167,13 @@ public class TaskPanel extends JPanel {
     }
 
     private void refreshImmediately() {
-        // 1. Refresh the underlying data
         tableModel.refreshData();
-
-        // 2. Force UI update
         SwingUtilities.invokeLater(() -> {
             tableModel.fireTableDataChanged();
             revalidate();
             repaint();
-
         });
 
-        getParent().revalidate(); // Refresh parent container
         Window window = SwingUtilities.getWindowAncestor(this);
         if (window != null) {
             window.repaint();
@@ -168,21 +206,21 @@ public class TaskPanel extends JPanel {
             this.taskManager = taskManager;
             this.filteredTasks = new ArrayList<>(taskManager.getTasks());
         }
+
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column == 5; // Only make "Completed" column editable
+            return column == 5;
         }
 
         @Override
         public void setValueAt(Object value, int row, int column) {
             Task task = filteredTasks.get(row);
-            if (column == 5) { // Completed column
-                task.setCompleted((Boolean) value);
-                fireTableCellUpdated(row, column);
-                try {
-                    StorageManager.saveData(taskManager);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
+            if (column == 5) {
+                boolean completed = (Boolean)value;
+                task.setCompleted(completed);
+                if (completed) {
+                    taskManager.completeTask(task);
+                    refreshCallback.run();
                 }
             }
         }
@@ -193,7 +231,6 @@ public class TaskPanel extends JPanel {
         }
 
         public void fireTableDataChanged() {
-            // Ensure we're working with fresh data
             filteredTasks = new ArrayList<>(taskManager.getTasks());
             super.fireTableDataChanged();
         }
@@ -249,15 +286,6 @@ public class TaskPanel extends JPanel {
                 default: return null;
             }
         }
-    }
-
-    public void refresh() {
-        SwingUtilities.invokeLater(() -> {
-            tableModel.filter(task -> true); // Reset any filters
-            tableModel.fireTableDataChanged();
-            revalidate();
-            repaint();
-        });
     }
 
     private abstract class DocumentAdapter implements javax.swing.event.DocumentListener {

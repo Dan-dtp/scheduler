@@ -14,9 +14,9 @@ com/scheduler/utils/DateParser.class
 com/scheduler/models/TaskManager.class
 com/scheduler/views/SchedulePanel$ScheduleTableModel.class
 com/scheduler/utils/DateUtils.class
-com/scheduler/views/AnalyticsPanel.class
 com/scheduler/utils/TaskFilter.class
 com/scheduler/views/TaskPanel$DocumentAdapter.class
+com/scheduler/views/CompletedTasksPanel.class
 com/scheduler/views/dialogs/TaskDialog.class
 com/scheduler/models/RecurrencePattern.class
 com/scheduler/views/SchedulePanel$DaySchedule.class
@@ -25,6 +25,7 @@ com/scheduler/utils/StorageManager$ColorAdapter.class
 com/scheduler/views/SchedulePanel.class
 com/scheduler/views/CalendarPanel.class
 com/scheduler/utils/StorageManager$LocalDateAdapter.class
+com/scheduler/views/CompletedTasksPanel$CompletedTasksTableModel.class
 com/scheduler/utils/ColorAdapter.class
 com/scheduler/models/Priority.class
 com/scheduler/models/Subtask.class

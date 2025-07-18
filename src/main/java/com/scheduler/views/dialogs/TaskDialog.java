@@ -4,6 +4,7 @@ import com.scheduler.models.*;
 import com.scheduler.utils.StorageManager;
 import com.scheduler.views.Theme;
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.io.IOException;
 import java.time.*;
@@ -35,6 +36,69 @@ public class TaskDialog extends JDialog {
         setSize(500, 450);
         setLocationRelativeTo(parent);
         initComponents();
+        updateTheme();
+    }
+
+    private void updateTheme() {
+        Color bg = Theme.BACKGROUND;
+        Color fg = Theme.TEXT_PRIMARY;
+
+        getContentPane().setBackground(bg);
+        updateComponentTheme(getContentPane(), bg, fg);
+
+        revalidate();
+        repaint();
+    }
+
+    private void updateComponentTheme(Container container, Color bg, Color fg) {
+        for (Component comp : container.getComponents()) {
+            if (!comp.isVisible()) continue;
+
+            // Set basic colors for all components
+            if (comp instanceof JComponent) {
+                ((JComponent)comp).setOpaque(true);
+            }
+            comp.setBackground(Theme.CARD_BACKGROUND);
+            comp.setForeground(fg);
+
+            // Handle specific component types
+            if (comp instanceof JLabel) {
+                // Labels don't need background
+                comp.setBackground(container.getBackground());
+                ((JLabel)comp).setForeground(fg);
+            }
+            else if (comp instanceof AbstractButton) {
+                if (comp instanceof JButton) {
+                    Theme.applyButtonStyle((JButton)comp);
+                } else {
+                    AbstractButton button = (AbstractButton)comp;
+                    button.setBackground(Theme.PRIMARY);
+                    button.setForeground(Color.WHITE);
+                }
+            }
+            else if (comp instanceof JTextComponent) {
+                comp.setBackground(Theme.CARD_BACKGROUND);
+            }
+            else if (comp instanceof JScrollPane) {
+                JScrollPane scrollPane = (JScrollPane)comp;
+                scrollPane.getViewport().setBackground(Theme.CARD_BACKGROUND);
+                scrollPane.setBorder(BorderFactory.createLineBorder(Theme.BORDER));
+            }
+            else if (comp instanceof JViewport) {
+                // Viewports should match their container
+                comp.setBackground(container.getBackground());
+            }
+
+            // Recursive update for containers
+            if (comp instanceof Container) {
+                updateComponentTheme((Container)comp, bg, fg);
+            }
+        }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
     }
 
     private void initComponents() {
@@ -96,10 +160,7 @@ public class TaskDialog extends JDialog {
         okButton = new JButton("Save");
         cancelButton = new JButton("Cancel");
 
-        okButton.addActionListener(e -> {
-            saveTask();
-        });
-
+        okButton.addActionListener(e -> saveTask());
         cancelButton.addActionListener(e -> dispose());
 
         Theme.applyButtonStyle(okButton);
@@ -129,7 +190,7 @@ public class TaskDialog extends JDialog {
     private JPanel createLabeledPanel(String label, Component component) {
         JPanel panel = new JPanel(new BorderLayout(5, 0));
         JLabel jLabel = new JLabel(label);
-        jLabel.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+        jLabel.setForeground(Theme.TEXT_PRIMARY);
         panel.add(jLabel, BorderLayout.WEST);
         panel.add(component, BorderLayout.CENTER);
         return panel;
@@ -138,7 +199,7 @@ public class TaskDialog extends JDialog {
     private void addFormRow(JPanel panel, String label, Component component) {
         JPanel row = new JPanel(new BorderLayout(10, 0));
         JLabel jLabel = new JLabel(label);
-        jLabel.setForeground(Theme.isDarkMode() ? Theme.TEXT_PRIMARY_DARK : Theme.TEXT_PRIMARY_LIGHT);
+        jLabel.setForeground(Theme.TEXT_PRIMARY);
         row.add(jLabel, BorderLayout.WEST);
         row.add(component, BorderLayout.CENTER);
         panel.add(row);
@@ -171,6 +232,27 @@ public class TaskDialog extends JDialog {
         }
     }
 
+    private void updateFormComponents() {
+        if (titleField != null) {
+            titleField.setBackground(Theme.CARD_BACKGROUND);
+        }
+        if (descriptionArea != null) {
+            descriptionArea.setBackground(Theme.CARD_BACKGROUND);
+        }
+        if (priorityCombo != null) {
+            priorityCombo.setBackground(Theme.CARD_BACKGROUND);
+        }
+        if (categoryCombo != null) {
+            categoryCombo.setBackground(Theme.CARD_BACKGROUND);
+        }
+        if (dueDateSpinner != null) {
+            dueDateSpinner.setBackground(Theme.CARD_BACKGROUND);
+        }
+        if (timeSpinner != null) {
+            timeSpinner.setBackground(Theme.CARD_BACKGROUND);
+        }
+    }
+
     private void saveTask() {
         try {
             if (titleField.getText().trim().isEmpty()) {
@@ -187,7 +269,6 @@ public class TaskDialog extends JDialog {
             task.setCategory((Category) categoryCombo.getSelectedItem());
             task.setCompleted(completedCheckbox.isSelected());
 
-
             // Combine date and time
             Date date = (Date) dueDateSpinner.getValue();
             Date time = (Date) timeSpinner.getValue();
@@ -195,19 +276,14 @@ public class TaskDialog extends JDialog {
             LocalTime localTime = time.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
             task.setDueDate(LocalDateTime.of(localDate, localTime));
 
-            task.setCompleted(completedCheckbox.isSelected());
-
-
             taskManager.addTask(task);
-
-
             StorageManager.saveData(taskManager);
 
             saved = true;
             refreshCallback.run();
             dispose();  // Close the dialog
         } catch (Exception ex) {
-            ex.printStackTrace();  // Add this for debugging
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(this,
                     "Error saving task: " + ex.getMessage(),
                     "Error", JOptionPane.ERROR_MESSAGE);
