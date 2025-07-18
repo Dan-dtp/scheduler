@@ -77,6 +77,7 @@ public class TaskPanel extends JPanel {
     }
 
     private void initComponents() {
+        // Apply theme to main panel
         Theme.applyModernPanelStyle(this);
 
         // Create table model
@@ -88,12 +89,15 @@ public class TaskPanel extends JPanel {
         taskTable.setDefaultRenderer(Priority.class, new PriorityRenderer());
         taskTable.setDefaultRenderer(Category.class, new CategoryRenderer());
         taskTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        taskTable.getColumnModel().getColumn(5).setCellRenderer(new CheckBoxRenderer());
+        taskTable.getColumnModel().getColumn(5).setCellEditor(new CheckBoxEditor(new JCheckBox()));
 
-        // Toolbar
-        JToolBar toolBar = new JToolBar();
-        toolBar.setFloatable(false);
-        toolBar.setBackground(Theme.BACKGROUND);
+        // Main toolbar
+        JToolBar mainToolBar = new JToolBar();
+        mainToolBar.setFloatable(false);
+        mainToolBar.setBackground(Theme.BACKGROUND);
 
+        // Action buttons
         JButton addButton = new JButton("Add Task");
         JButton editButton = new JButton("Edit");
         JButton deleteButton = new JButton("Delete");
@@ -106,9 +110,23 @@ public class TaskPanel extends JPanel {
         editButton.addActionListener(e -> editSelectedTask());
         deleteButton.addActionListener(e -> deleteSelectedTask());
 
-        toolBar.add(addButton);
-        toolBar.add(editButton);
-        toolBar.add(deleteButton);
+        // Sort buttons
+        JButton sortByDateBtn = new JButton("Sort by Date");
+        JButton sortByPriorityBtn = new JButton("Sort by Priority");
+
+        Theme.applyButtonStyle(sortByDateBtn);
+        Theme.applyButtonStyle(sortByPriorityBtn);
+
+        sortByDateBtn.addActionListener(e -> sortTasks(Comparator.comparing(Task::getDueDate)));
+        sortByPriorityBtn.addActionListener(e -> sortTasks(Comparator.comparing(Task::getPriority)));
+
+        // Add buttons to toolbar
+        mainToolBar.add(addButton);
+        mainToolBar.add(editButton);
+        mainToolBar.add(deleteButton);
+        mainToolBar.add(Box.createHorizontalStrut(20));
+        mainToolBar.add(sortByDateBtn);
+        mainToolBar.add(sortByPriorityBtn);
 
         // Filter panel
         JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -139,24 +157,55 @@ public class TaskPanel extends JPanel {
         filterPanel.add(new JLabel("Priority:"));
         filterPanel.add(priorityFilter);
 
+        // Button panel
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        Theme.applyModernPanelStyle(buttonPanel);
+
         // Add components
         add(filterPanel, BorderLayout.NORTH);
         add(new JScrollPane(taskTable), BorderLayout.CENTER);
-        add(toolBar, BorderLayout.SOUTH);
+
+        // Add toolbar to button panel
+        buttonPanel.add(mainToolBar, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void filterTasks(String searchText, Priority priority) {
+    private static class CheckBoxRenderer extends DefaultTableCellRenderer {
+        private final JCheckBox checkBox = new JCheckBox();
+
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+            checkBox.setSelected(value != null && (Boolean) value);
+            checkBox.setHorizontalAlignment(JLabel.CENTER);
+            checkBox.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return checkBox;
+        }
+    }
+
+    private static class CheckBoxEditor extends DefaultCellEditor {
+        public CheckBoxEditor(JCheckBox checkBox) {
+            super(checkBox);
+        }
+    }
+
+    private void sortTasks(Comparator<Task> comparator) {
+        tableModel.sortTasks(comparator);
+    }
+
+    private void filterTasks(String searchText, Priority priorityFilter) {
         tableModel.filter(task -> {
             boolean matches = true;
 
-            if (searchText != null && !searchText.isEmpty()) {
+            // Search text filter (case insensitive)
+            if (!searchText.isEmpty()) {
                 String searchLower = searchText.toLowerCase();
-                matches &= (task.getTitle().toLowerCase().contains(searchLower) ||
-                        task.getDescription().toLowerCase().contains(searchLower));
+                matches = task.getTitle().toLowerCase().contains(searchLower) ||
+                        task.getDescription().toLowerCase().contains(searchLower);
             }
 
-            if (priority != null) {
-                matches &= (task.getPriority() == priority);
+            // Priority filter
+            if (priorityFilter != null) {
+                matches = matches && (task.getPriority() == priorityFilter);
             }
 
             return matches;
@@ -220,6 +269,12 @@ public class TaskPanel extends JPanel {
         public boolean isCellEditable(int row, int column) {
             return column == 5;
         }
+
+        public void sortTasks(Comparator<Task> comparator) {
+            filteredTasks.sort(comparator);
+            fireTableDataChanged();
+        }
+
 
         @Override
         public void setValueAt(Object value, int row, int column) {

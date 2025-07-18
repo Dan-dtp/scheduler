@@ -6,16 +6,21 @@ com/scheduler/AppMain.class
 com/scheduler/utils/StorageManager$1.class
 com/scheduler/models/RecurrencePattern$Frequency.class
 com/scheduler/views/TaskPanel$TaskTableModel.class
+com/scheduler/views/CompletedTasksPanel$CheckBoxEditor.class
 com/scheduler/views/TaskPanel.class
 com/scheduler/views/MainFrame.class
 com/scheduler/views/Theme.class
 com/scheduler/views/components/CategoryRenderer.class
 com/scheduler/utils/DateParser.class
+com/scheduler/views/CompletedTasksPanel$CheckBoxRenderer.class
+com/scheduler/views/TaskPanel$CheckBoxRenderer.class
 com/scheduler/models/TaskManager.class
 com/scheduler/views/SchedulePanel$ScheduleTableModel.class
 com/scheduler/utils/DateUtils.class
 com/scheduler/utils/TaskFilter.class
 com/scheduler/views/TaskPanel$DocumentAdapter.class
+com/scheduler/utils/CommandLineInterface.class
+com/scheduler/views/TaskPanel$CheckBoxEditor.class
 com/scheduler/views/CompletedTasksPanel.class
 com/scheduler/views/dialogs/TaskDialog.class
 com/scheduler/models/RecurrencePattern.class
@@ -33,5 +38,4 @@ com/scheduler/views/SchedulePanel$ScheduleTableCellRenderer.class
 com/scheduler/utils/StorageManager$LocalDateTimeAdapter.class
 com/scheduler/models/Task.class
 com/scheduler/views/TaskPanel$1.class
-com/scheduler/utils/StorageManager$2.class
 com/scheduler/models/Category.class

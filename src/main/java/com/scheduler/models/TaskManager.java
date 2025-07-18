@@ -8,8 +8,9 @@ public class TaskManager {
     private List<Category> categories = new ArrayList<>(); // Changed to modifiable list
     private List<Task> completedTasks = new ArrayList<>();
 
-    public void completeTask(Task task) {
+    public synchronized void completeTask(Task task) {
         if (tasks.remove(task)) {
+            task.setCompleted(true);
             completedTasks.add(task);
             Collections.sort(completedTasks);
         }
@@ -21,6 +22,7 @@ public class TaskManager {
 
     public synchronized void uncompleteTask(Task task) {
         if (completedTasks.remove(task)) {
+            task.setCompleted(false);
             tasks.add(task);
             Collections.sort(tasks);
         }
@@ -41,16 +43,9 @@ public class TaskManager {
     }
 
     public synchronized void addTask(Task task) {
-        if (task == null) {
-            System.err.println("Attempted to add null task");
-            return;
-        }
-
-        tasks.removeIf(t -> t.getId().equals(task.getId())); // Prevent duplicates
+        tasks.removeIf(t -> t.getId().equals(task.getId()));
         tasks.add(task);
         Collections.sort(tasks);
-        System.out.println("[DEBUG] Added task: " + task.getTitle() +
-                " (Total tasks: " + tasks.size() + ")");
     }
 
 

@@ -1,11 +1,11 @@
 {
   "tasks": [
     {
-      "id": "757979e0-c4f6-406d-b350-6f7f044b737c",
-      "title": "dssg",
-      "description": "ssgbds",
+      "id": "609bead3-cc8d-4a08-be64-ce4ac5f8b4be",
+      "title": "sdvsdvsd",
+      "description": "sdvsv",
       "priority": "HIGH",
-      "dueDate": "2025-07-17T22:47",
+      "dueDate": "2025-07-17T22:22:31.914",
       "category": {
         "name": "Work",
         "color": {
@@ -19,29 +19,11 @@
       "subtasks": []
     },
     {
-      "id": "fdf5a0ed-cd1c-41c6-a974-ad1845930146",
-      "title": "sbfsdbdf",
-      "description": "sbdfbfds",
-      "priority": "HIGH",
-      "dueDate": "2025-07-17T23:47",
-      "category": {
-        "name": "Work",
-        "color": {
-          "r": 255,
-          "g": 0,
-          "b": 0
-        }
-      },
-      "completed": false,
-      "tags": [],
-      "subtasks": []
-    },
-    {
-      "id": "aa08d355-9c39-43a0-b21c-dddf83764976",
-      "title": "sdvsdv",
-      "description": "sdvdsv",
+      "id": "7a4e52bd-92fe-417d-af35-234bfa658f36",
+      "title": "sdvds",
+      "description": "vsdvsv",
       "priority": "MEDIUM",
-      "dueDate": "2025-07-18T18:46",
+      "dueDate": "2025-07-17T22:22:35.822",
       "category": {
         "name": "Family",
         "color": {
@@ -55,17 +37,17 @@
       "subtasks": []
     },
     {
-      "id": "24c7d372-b088-4154-81a5-5f1f9aef85f5",
-      "title": "dvsdvsvvzdvzvzv",
-      "description": "zvsregrgs",
-      "priority": "HIGH",
-      "dueDate": "2025-07-21T14:46",
+      "id": "b0ed8922-2fe7-4daf-ac40-31d87a6708a3",
+      "title": "sdvvsv",
+      "description": "svsssdgdsf",
+      "priority": "LOW",
+      "dueDate": "2025-07-17T22:22:42.372",
       "category": {
-        "name": "Other",
+        "name": "Work",
         "color": {
-          "r": 128,
-          "g": 128,
-          "b": 128
+          "r": 255,
+          "g": 0,
+          "b": 0
         }
       },
       "completed": false,
@@ -73,16 +55,52 @@
       "subtasks": []
     },
     {
-      "id": "d1f4e70e-d7e8-449c-bf0c-2338293b51ab",
-      "title": "dvsdvs",
-      "description": "sdvsdv",
-      "priority": "LOW",
-      "dueDate": "2025-07-22T15:46",
+      "id": "fbe76497-d4d4-4ebe-9c1b-ac9ea3f220ab",
+      "title": "sdsvsdv",
+      "description": "",
+      "priority": "HIGH",
+      "dueDate": "2025-07-18T22:22:47.270",
       "category": {
-        "name": "Family",
+        "name": "Work",
         "color": {
-          "r": 0,
-          "g": 255,
+          "r": 255,
+          "g": 0,
+          "b": 0
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
+    },
+    {
+      "id": "e881c29f-dd05-4ec2-a008-a9139cea2622",
+      "title": "dbsbsd",
+      "description": "sdvsdvs",
+      "priority": "MEDIUM",
+      "dueDate": "2025-09-17T22:22:53.186",
+      "category": {
+        "name": "Work",
+        "color": {
+          "r": 255,
+          "g": 0,
+          "b": 0
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
+    },
+    {
+      "id": "7fe6dfb7-cdf3-4d8c-b2c5-bddce1db64fa",
+      "title": "dsvsdddf",
+      "description": "dfdff",
+      "priority": "LOW",
+      "dueDate": "2025-10-17T22:22:58.885",
+      "category": {
+        "name": "Work",
+        "color": {
+          "r": 255,
+          "g": 0,
           "b": 0
         }
       },
@@ -91,24 +109,5 @@
       "subtasks": []
     }
   ],
-  "completedTasks": [
-    {
-      "id": "a3f0cb2f-0064-4361-915a-48dab171b9cb",
-      "title": "sdvdsvs",
-      "description": "sdvdsv",
-      "priority": "HIGH",
-      "dueDate": "2025-07-17T21:46:00.521",
-      "category": {
-        "name": "Work",
-        "color": {
-          "r": 255,
-          "g": 0,
-          "b": 0
-        }
-      },
-      "completed": true,
-      "tags": [],
-      "subtasks": []
-    }
-  ]
+  "completedTasks": []
 }

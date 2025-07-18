@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.List;
 
 public class StorageManager {
-    private static final String TASKS_FILE = "tasks.json";
+    static final String TASKS_FILE = "tasks.json";
     private static final String CATEGORIES_FILE = "categories.json";
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -23,49 +23,54 @@ public class StorageManager {
             .create();
 
     public static void saveData(TaskManager taskManager) throws IOException {
-        JsonObject data = new JsonObject();
-        data.add("tasks", gson.toJsonTree(taskManager.getTasks()));
-        data.add("completedTasks", gson.toJsonTree(taskManager.getCompletedTasks()));
+        JsonObject root = new JsonObject();
+        root.add("tasks", gson.toJsonTree(taskManager.getTasks()));
+        root.add("completedTasks", gson.toJsonTree(taskManager.getCompletedTasks()));
 
         try (Writer writer = new FileWriter(TASKS_FILE)) {
-            gson.toJson(data, writer);
+            gson.toJson(root, writer);
         }
     }
 
     public static void loadData(TaskManager taskManager) throws IOException {
-        // Load tasks
-        File tasksFile = new File(TASKS_FILE);
-        if (tasksFile.exists()) {
-            try (Reader reader = new FileReader(tasksFile)) {
-                Type taskListType = new TypeToken<List<Task>>(){}.getType();
-                List<Task> tasks = gson.fromJson(reader, taskListType);
-                System.out.println("Loaded tasks: " + tasks.size());
-                if (tasks != null) {
-                    System.out.println("[DEBUG] Loading " + tasks.size() + " tasks from file");
-                    tasks.forEach(task -> {
-                        System.out.println(" - " + task.getTitle());
-                        taskManager.addTask(task);
-                    });
-                }
-            }
+        File file = new File(TASKS_FILE);
+        if (!file.exists()) {
+            initializeEmptyDataFile();
+            return;
         }
 
-        File categoriesFile = new File(CATEGORIES_FILE);
-        if (categoriesFile.exists()) {
-            try (Reader reader = new FileReader(categoriesFile)) {
-                Type categoryListType = new TypeToken<List<Category>>(){}.getType();
-                List<Category> categories = gson.fromJson(reader, categoryListType);
-                if (categories != null) {
-                    List<Category> currentCategories = taskManager.getCategories();
-                    if (currentCategories instanceof ArrayList) {
-                        ((ArrayList<Category>) currentCategories).clear();
-                    } else {
-                        // Handle case where getCategories() returns unmodifiable list
-                        throw new IllegalStateException("Categories list is not modifiable");
-                    }
-                    currentCategories.addAll(categories);
-                }
+        try (Reader reader = new FileReader(file)) {
+            JsonObject root = gson.fromJson(reader, JsonObject.class);
+            if (root == null) {
+                initializeEmptyDataFile();
+                return;
             }
+
+            Type taskListType = new TypeToken<List<Task>>(){}.getType();
+
+            // Load regular tasks
+            List<Task> tasks = gson.fromJson(root.get("tasks"), taskListType);
+            if (tasks != null) {
+                taskManager.getTasks().clear();
+                taskManager.getTasks().addAll(tasks);
+            }
+
+            // Load completed tasks
+            List<Task> completedTasks = gson.fromJson(root.get("completedTasks"), taskListType);
+            if (completedTasks != null) {
+                taskManager.getCompletedTasks().clear();
+                taskManager.getCompletedTasks().addAll(completedTasks);
+            }
+        }
+    }
+
+    static void initializeEmptyDataFile() throws IOException {
+        JsonObject root = new JsonObject();
+        root.add("tasks", new JsonArray());
+        root.add("completedTasks", new JsonArray());
+
+        try (Writer writer = new FileWriter(TASKS_FILE)) {
+            gson.toJson(root, writer);
         }
     }
 

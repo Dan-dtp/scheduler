@@ -7,6 +7,7 @@ import com.scheduler.models.TaskManager;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,10 +33,30 @@ public class CompletedTasksPanel extends JPanel {
         completedTable.setBackground(new Color(255, 253, 245));
         completedTable.setGridColor(new Color(220, 230, 240));
         completedTable.setSelectionBackground(new Color(255, 200, 150));
+        completedTable.getColumnModel().getColumn(5).setCellRenderer(new CheckBoxRenderer());
+        completedTable.getColumnModel().getColumn(5).setCellEditor(new CheckBoxEditor(new JCheckBox()));
 
         JScrollPane scrollPane = new JScrollPane(completedTable);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         add(scrollPane, BorderLayout.CENTER);
+    }
+
+    private static class CheckBoxRenderer extends DefaultTableCellRenderer {
+        private final JCheckBox checkBox = new JCheckBox();
+
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+            checkBox.setSelected(value != null && (Boolean) value);
+            checkBox.setHorizontalAlignment(JLabel.CENTER);
+            checkBox.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+            return checkBox;
+        }
+    }
+
+    private static class CheckBoxEditor extends DefaultCellEditor {
+        public CheckBoxEditor(JCheckBox checkBox) {
+            super(checkBox);
+        }
     }
 
     public void refresh() {
@@ -44,7 +65,7 @@ public class CompletedTasksPanel extends JPanel {
 
     private class CompletedTasksTableModel extends AbstractTableModel {
         private List<Task> completedTasks;
-        private final String[] columnNames = {"Title", "Description", "Priority", "Completed Date", "Category"};
+        private final String[] columnNames = {"Title", "Description", "Priority", "Completed Date", "Category", "Completed"};
 
         public CompletedTasksTableModel() {
             this.completedTasks = new ArrayList<>(taskManager.getCompletedTasks());
@@ -83,23 +104,21 @@ public class CompletedTasksPanel extends JPanel {
                 case 2: return Priority.class;
                 case 3: return LocalDateTime.class;
                 case 4: return Category.class;
+                case 5: return Boolean.class;
                 default: return Object.class;
             }
         }
 
         @Override
         public void setValueAt(Object value, int row, int column) {
-            Task task = completedTasks.get(row);
-            if (column == 5) { // Completed column
+            if (column == 5) {
+                Task task = completedTasks.get(row);
                 boolean completed = (Boolean)value;
-                task.setCompleted(completed);
                 if (!completed) {
                     taskManager.uncompleteTask(task);
                     completedTasks.remove(row);
                     fireTableRowsDeleted(row, row);
-                    if (refreshCallback != null) {
-                        refreshCallback.run();
-                    }
+                    refreshCallback.run();
                 }
             }
         }

@@ -138,7 +138,7 @@ public class CalendarPanel extends JPanel {
                             .append(")\n");
                 }
                 tasksArea.setText(tasksText.toString());
-            } else {
+            }  else {
                 tasksArea.setText("No tasks");
                 tasksArea.setForeground(Theme.TEXT_SECONDARY);
             }

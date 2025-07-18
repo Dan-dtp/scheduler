@@ -20,6 +20,7 @@
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/AppMain.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/utils/StorageManager.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/controllers/TaskController.java
+/Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/utils/CommandLineInterface.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/models/Category.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/views/MainFrame.java
 /Users/danielmoshood/Documents/Programming/Scheduler/src/main/java/com/scheduler/views/dialogs/TaskDialog.java
