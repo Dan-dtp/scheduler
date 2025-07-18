@@ -1,5 +1,5 @@
-# schedulerSmart Scheduler Pro - Task Management Application
-https://screenshot.png [Note: You should add an actual screenshot here]
+# Smart Scheduler Pro - Task Management Application
+
 
 Table of Contents
 
@@ -58,7 +58,7 @@ Option 2: Build from Source
 
 Clone the repository:
 text
-git clone https://github.com/yourusername/smart-scheduler-pro.git
+git clone https://github.com/yourusername/scheduler.git
 Navigate to the project directory:
 text
 cd smart-scheduler-pro
@@ -67,7 +67,8 @@ text
 mvn clean package
 Run the application:
 text
-java -jar target/smart-scheduler-pro.jar
+java -jar target/smart-scheduler-1.0.0.jar
+
 Usage
 
 Main Interface
@@ -165,7 +166,7 @@ Open a Pull Request
 Development Setup
 
 Import the project as a Maven project in your IDE
-Ensure Java 17 SDK is configured
+Ensure Java 17 (or higher) SDK  is configured
 Run AppMain.java to start the application
 License
 
