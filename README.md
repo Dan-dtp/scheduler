@@ -64,23 +64,29 @@ Completed tasks view
 Download the latest release JAR file from the Releases page
 
 Run the application with:
-* text
+``` bash
 * java -jar smart-scheduler-pro.jar
-
+```
 ### Option 2: Build from Source
 
 Clone the repository:
-* text
-* git clone https://github.com/yourusername/scheduler.git
+
+``` bash
+git clone https://github.com/yourusername/scheduler.git
+```
 * Navigate to the project directory:
-* text
-* cd smart-scheduler-pro
+
+``` bash
+cd smart-scheduler-pro
+```
 * Build the project with Maven:
-* text
-* mvn clean package
+``` bash
+mvn clean package
+```
 * Run the application:
-* text
-* java -jar target/smart-scheduler-1.0.0.jar
+``` bash
+java -jar target/smart-scheduler-1.0.0.jar
+```
 
 ## Usage
 
@@ -140,8 +146,8 @@ The application features a tabbed interface with four main views:
 
 All application data is stored in JSON format in the following files:
 
-* tasks.json: Contains both active and completed tasks
-* categories.json: Stores category definitions
+    tasks.json: Contains both active and completed tasks
+    categories.json: Stores category definitions
 
 These files are created automatically in the application's working directory.
 
