@@ -65,7 +65,7 @@ Download the latest release JAR file from the Releases page
 
 Run the application with:
 ``` bash
-* java -jar smart-scheduler-pro.jar
+java -jar target/smart-scheduler-1.0.0.jar
 ```
 ### Option 2: Build from Source
 
@@ -174,14 +174,7 @@ src/
 ├── test/                    # Unit tests
 └── pom.xml                  # Maven configuration
 ```
-## Screenshots
-![](/Users/danielmoshood/Desktop/Screenshot 2025-07-18 at 00.17.35.png)
-![](/Users/danielmoshood/Desktop/Screenshot 2025-07-18 at 00.16.45.png)
-* Main task view with color-coded priorities and categories
-* Calendar view showing tasks
-* Schedule view with weekly overview
-* Task creation dialog
-* Recurrence settings dialog
+
 
 ## Contributing
 
