@@ -1,11 +1,29 @@
 {
   "tasks": [
     {
-      "id": "609bead3-cc8d-4a08-be64-ce4ac5f8b4be",
-      "title": "sdvsdvsd",
-      "description": "sdvsv",
+      "id": "e1c7a431-a8e1-4eaf-afb6-e88c43a52bc6",
+      "title": "Go to the gym",
+      "description": "Pull day at the gym",
       "priority": "HIGH",
-      "dueDate": "2025-07-17T22:22:31.914",
+      "dueDate": "2025-07-18T22:00",
+      "category": {
+        "name": "Personal",
+        "color": {
+          "r": 0,
+          "g": 0,
+          "b": 255
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
+    },
+    {
+      "id": "2a5dd25a-4381-4b00-aee7-0e688bb248ad",
+      "title": "Apply for Jobs",
+      "description": "Start applications for at least 10 jobs",
+      "priority": "HIGH",
+      "dueDate": "2025-07-19T09:15",
       "category": {
         "name": "Work",
         "color": {
@@ -18,6 +36,80 @@
       "tags": [],
       "subtasks": []
     },
+    {
+      "id": "0741c279-9b98-474f-bd88-a557fcdd4820",
+      "title": "Meal Prep",
+      "description": "Make food to eat for the house",
+      "priority": "MEDIUM",
+      "dueDate": "2025-07-19T13:15",
+      "category": {
+        "name": "Family",
+        "color": {
+          "r": 0,
+          "g": 255,
+          "b": 0
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
+    },
+    {
+      "id": "40ef362c-617a-4159-b6ce-1f6daccdc2b9",
+      "title": "Watch anime",
+      "description": "Find new anime to watch",
+      "priority": "LOW",
+      "dueDate": "2025-07-19T16:14",
+      "category": {
+        "name": "Personal",
+        "color": {
+          "r": 0,
+          "g": 0,
+          "b": 255
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
+    },
+    {
+      "id": "6827495c-e858-4479-aea3-15d2082ded8f",
+      "title": "Research Masters Programs",
+      "description": "Find Masters programs related to field",
+      "priority": "LOW",
+      "dueDate": "2025-07-22T11:15",
+      "category": {
+        "name": "Education",
+        "color": {
+          "r": 255,
+          "g": 200,
+          "b": 0
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
+    },
+    {
+      "id": "2564d27c-b52d-4f2e-a8b7-7782cd021e27",
+      "title": "Clean Room",
+      "description": "Tidy up and organize room",
+      "priority": "LOW",
+      "dueDate": "2025-07-22T11:16",
+      "category": {
+        "name": "Other",
+        "color": {
+          "r": 128,
+          "g": 128,
+          "b": 128
+        }
+      },
+      "completed": false,
+      "tags": [],
+      "subtasks": []
+    }
+  ],
+  "completedTasks": [
     {
       "id": "7a4e52bd-92fe-417d-af35-234bfa658f36",
       "title": "sdvds",
@@ -32,25 +124,7 @@
           "b": 0
         }
       },
-      "completed": false,
-      "tags": [],
-      "subtasks": []
-    },
-    {
-      "id": "b0ed8922-2fe7-4daf-ac40-31d87a6708a3",
-      "title": "sdvvsv",
-      "description": "svsssdgdsf",
-      "priority": "LOW",
-      "dueDate": "2025-07-17T22:22:42.372",
-      "category": {
-        "name": "Work",
-        "color": {
-          "r": 255,
-          "g": 0,
-          "b": 0
-        }
-      },
-      "completed": false,
+      "completed": true,
       "tags": [],
       "subtasks": []
     },
@@ -68,46 +142,9 @@
           "b": 0
         }
       },
-      "completed": false,
-      "tags": [],
-      "subtasks": []
-    },
-    {
-      "id": "e881c29f-dd05-4ec2-a008-a9139cea2622",
-      "title": "dbsbsd",
-      "description": "sdvsdvs",
-      "priority": "MEDIUM",
-      "dueDate": "2025-09-17T22:22:53.186",
-      "category": {
-        "name": "Work",
-        "color": {
-          "r": 255,
-          "g": 0,
-          "b": 0
-        }
-      },
-      "completed": false,
-      "tags": [],
-      "subtasks": []
-    },
-    {
-      "id": "7fe6dfb7-cdf3-4d8c-b2c5-bddce1db64fa",
-      "title": "dsvsdddf",
-      "description": "dfdff",
-      "priority": "LOW",
-      "dueDate": "2025-10-17T22:22:58.885",
-      "category": {
-        "name": "Work",
-        "color": {
-          "r": 255,
-          "g": 0,
-          "b": 0
-        }
-      },
-      "completed": false,
+      "completed": true,
       "tags": [],
       "subtasks": []
     }
-  ],
-  "completedTasks": []
+  ]
 }
